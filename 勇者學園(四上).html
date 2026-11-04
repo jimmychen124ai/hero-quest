@@ -1,0 +1,1117 @@
+<title>勇者學園四上冒險</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&text=%E7%9A%93&display=swap">
+<style>
+/* Layout: kid game shell — slim top bar, big rounded cards, chunky "pressable" buttons, fixed icon tab bar at the bottom. */
+:root{
+  --bg:#EDF4FF;--bg2:#E1EBFB;--surface:#FFFFFF;--soft:#F4F8FF;--ink:#1F2A44;--muted:#5B6987;--line:#D2DCEE;
+  --band:#2A3170;--band-ink:#FFF7E0;--band-muted:#BFC6EA;
+  --gold:#FFC23D;--gold-ink:#3A2600;--ok:#1F9A65;--ok-soft:#DCF4E9;--bad:#E0464B;--bad-soft:#FDE3E3;--hint:#FFF3C7;
+  --zh:#25A066;--ma:#3A78D8;--na:#EC8420;--so:#DA5279;
+  --f-disp:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --r:22px;--press:0 4px 0 rgba(20,30,70,.18);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12172B;--bg2:#182039;--surface:#1E2640;--soft:#252E4C;--ink:#EEF2FB;--muted:#A6B1CC;--line:#35416B;
+  --band:#0B0F22;--band-ink:#FFF1C9;--band-muted:#9AA3C8;
+  --gold:#FFC94F;--gold-ink:#3A2600;--ok:#3CC488;--ok-soft:#14362A;--bad:#F2696D;--bad-soft:#3E1F24;--hint:#3B3319;
+  --zh:#42C384;--ma:#6B9DF0;--na:#F7A04B;--so:#F07A98;--press:0 4px 0 rgba(0,0,0,.45);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12172B;--bg2:#182039;--surface:#1E2640;--soft:#252E4C;--ink:#EEF2FB;--muted:#A6B1CC;--line:#35416B;
+  --band:#0B0F22;--band-ink:#FFF1C9;--band-muted:#9AA3C8;
+  --gold:#FFC94F;--gold-ink:#3A2600;--ok:#3CC488;--ok-soft:#14362A;--bad:#F2696D;--bad-soft:#3E1F24;--hint:#3B3319;
+  --zh:#42C384;--ma:#6B9DF0;--na:#F7A04B;--so:#F07A98;--press:0 4px 0 rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-disp);font-weight:400;text-wrap:balance;line-height:1.3;margin:0}
+.art{display:block;max-width:100%;height:auto}
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--band);color:var(--band-ink)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:8px}
+.brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;color:inherit}
+.brand b{font-family:var(--f-disp);font-weight:400;font-size:22px;letter-spacing:.04em}
+.me{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:15px}
+.me .lv{background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:2px 10px;font-family:var(--f-disp)}
+.me .st{font-family:var(--f-disp);color:var(--gold)}
+.xpbar{width:72px;height:10px;border-radius:10px;background:rgba(255,255,255,.18);overflow:hidden}
+.xpbar i{display:block;height:100%;background:var(--gold)}
+/* bottom nav */
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bnav .wrap{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding-block:6px}
+.bnav button{background:none;border:0;border-radius:14px;padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:0;font-size:13px;color:var(--muted);position:relative;font-family:var(--f-disp)}
+.bnav button .i{font-size:24px;line-height:1.2}
+.bnav button.on{background:var(--soft);color:var(--ink)}
+.badge{position:absolute;top:0;right:calc(50% - 26px);min-width:20px;padding:0 5px;border-radius:10px;background:var(--bad);color:#fff;font-size:12px;line-height:20px;font-family:var(--f-body);font-weight:700}
+main{padding-block:18px 120px}
+/* shared */
+.card{background:var(--surface);border:2px solid var(--line);border-radius:var(--r)}
+.btn{border:0;border-radius:16px;padding:12px 22px;font-family:var(--f-disp);font-size:19px;background:var(--soft);color:var(--ink);border:2px solid var(--line);box-shadow:var(--press);display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.go{background:var(--gold);color:var(--gold-ink);border-color:transparent}
+.btn.big{font-size:22px;padding:14px 30px;border-radius:20px}
+.btn.dark{background:var(--band);color:var(--band-ink);border-color:transparent}
+.btn.danger{background:var(--bad);color:#fff;border-color:transparent}
+.btn.sm{font-size:15px;padding:6px 14px;border-radius:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.muted{color:var(--muted)}
+.back{background:none;border:0;color:var(--muted);padding:4px 0;font-size:16px;margin-bottom:8px;font-family:var(--f-disp)}
+.shield{clip-path:polygon(50% 0,100% 13%,100% 56%,50% 100%,0 56%,0 13%);display:grid;place-items:center;font-family:var(--f-disp);color:#fff}
+.stars{color:var(--gold);letter-spacing:1px;font-size:20px;white-space:nowrap}
+.stars .off{color:var(--line)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:14px;padding:3px 12px;border-radius:999px;background:var(--soft);border:2px solid var(--line);color:var(--muted);font-family:var(--f-disp)}
+.pbar{height:12px;border-radius:12px;background:var(--soft);overflow:hidden;border:2px solid var(--line)}
+.pbar i{display:block;height:100%;background:var(--c,var(--gold));border-radius:10px}
+.sec{font-size:24px;margin:26px 0 12px}
+.bubble{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:12px 18px;font-family:var(--f-disp);font-size:20px;line-height:1.5}
+.bubble::before{content:"";position:absolute;left:-12px;top:26px;border:10px solid transparent;border-right-color:var(--line);border-left:0}
+.bubble::after{content:"";position:absolute;left:-8px;top:28px;border:8px solid transparent;border-right-color:var(--surface);border-left:0}
+.note{font-size:14px;color:var(--muted)}
+/* home */
+.scene{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:16px 20px;background:linear-gradient(180deg,var(--bg2),var(--surface));border:2px solid var(--line);border-radius:var(--r)}
+.scene .who{width:120px}
+.scene .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.realms{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.realm{text-align:left;padding:14px 16px 16px;background:var(--surface);border:3px solid var(--c);border-radius:var(--r);box-shadow:0 6px 0 var(--c);display:grid;gap:8px;position:relative;overflow:hidden}
+.realm:active{transform:translateY(4px);box-shadow:0 2px 0 var(--c)}
+.realm .pic{display:flex;align-items:flex-end;justify-content:space-between;background:var(--soft);border-radius:16px;padding:8px 10px 4px;min-height:96px}
+.realm .pic .emb{width:84px}
+.realm .pic .pal{width:70px}
+.realm h3{font-size:24px;color:var(--c)}
+.realm .sub{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;color:var(--muted)}
+.mon-card{display:flex;align-items:center;gap:14px;padding:12px 16px;border:3px solid var(--bad);border-radius:var(--r);background:var(--bad-soft);margin-top:14px}
+.mon-card .m{width:76px;flex:none}
+.mon-card b{font-family:var(--f-disp);font-weight:400;font-size:21px;display:block}
+.mon-card .grow{flex:1;min-width:0}
+/* realm page */
+.rhead{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:14px 18px;border-radius:var(--r);background:var(--c);color:#fff}
+.rhead .pal{width:86px;background:rgba(255,255,255,.9);border-radius:50%;padding:6px}
+.rhead h1{font-size:28px}
+.rhead p{margin:2px 0 0;font-size:15px;opacity:.92}
+.trail{display:flex;flex-direction:column;gap:18px;margin-top:22px;position:relative}
+.stop{display:flex;align-items:center;gap:14px;width:min(100%,500px);margin-left:var(--x,0);position:relative;background:none;border:0;padding:0;text-align:left}
+.stop+.stop::before{content:"";position:absolute;left:40px;top:-20px;height:20px;border-left:5px dotted var(--line)}
+.stop .ball{width:84px;height:84px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:38px;background:var(--surface);border:4px solid var(--c);box-shadow:0 5px 0 var(--c);position:relative}
+.stop .ball .n{position:absolute;bottom:-6px;right:-6px;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;font-family:var(--f-disp);font-size:16px;display:grid;place-items:center;border:3px solid var(--surface)}
+.stop.locked .ball{border-color:var(--line);box-shadow:0 5px 0 var(--line);filter:grayscale(1);opacity:.6}
+.stop.locked .n{background:var(--muted)}
+.stop .tx{flex:1;min-width:0;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:8px 14px}
+.stop .tx b{display:block;font-family:var(--f-disp);font-weight:400;font-size:20px}
+.stop .tx small{color:var(--muted);font-size:14px}
+.stop.here .tx{border-color:var(--gold);border-width:3px}
+.stop .mini{position:absolute;left:-6px;top:-38px;width:46px}
+.stop.boss .ball{width:96px;height:96px;background:var(--band);border-color:var(--gold);box-shadow:0 5px 0 var(--gold)}
+@media (max-width:560px){.stop{--x:0!important}}
+.mix{padding:16px 18px;margin-top:26px}
+.mix h3{font-size:22px}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pick label{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:14px;border:2px solid var(--line);background:var(--soft);font-size:16px;cursor:pointer}
+.pick input{width:20px;height:20px;accent-color:var(--c)}
+/* unit */
+.uhead{display:flex;align-items:center;gap:14px}
+.uhead .stk{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;font-size:40px;background:var(--surface);border:3px solid var(--c);box-shadow:0 4px 0 var(--c);flex:none}
+.uhead h1{font-size:28px}
+.utabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}
+.utabs button{border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 6px;font-family:var(--f-disp);font-size:18px;color:var(--muted);box-shadow:var(--press)}
+.utabs button.on{background:var(--c);border-color:var(--c);color:#fff}
+.talk{display:grid;grid-template-columns:80px 1fr;gap:14px;align-items:start;margin-bottom:16px}
+.les{display:flex;flex-wrap:wrap;gap:8px}
+.les span{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:6px 12px;font-size:16px}
+.les span i{font-style:normal;color:var(--c);font-family:var(--f-disp);margin-right:6px}
+.ccards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.ccard{padding:12px 16px}
+.ccard h3{font-size:19px;margin-bottom:4px}
+.ccard p{margin:0;font-size:15px;color:var(--muted);line-height:1.55}
+.mm{display:flex;flex-direction:column;align-items:center}
+.mm-root{background:var(--c);color:#fff;font-family:var(--f-disp);font-size:24px;padding:10px 26px;border-radius:999px;box-shadow:0 5px 0 rgba(0,0,0,.18)}
+.mm-stem{width:5px;height:22px;background:var(--c)}
+.mm-br{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;width:100%;border-top:5px solid var(--c);padding-top:18px;border-radius:6px}
+.mm-b{background:var(--surface);border:3px solid var(--c);border-radius:18px;position:relative}
+.mm-b::before{content:"";position:absolute;left:50%;top:-23px;height:20px;border-left:5px solid var(--c)}
+.mm-b summary{list-style:none;padding:8px 14px;font-family:var(--f-disp);font-size:20px;background:var(--soft);border-radius:15px 15px 0 0;cursor:pointer;display:flex;justify-content:space-between}
+.mm-b summary::after{content:"▾";color:var(--c)}
+.mm-b:not([open]) summary{border-radius:15px}
+.mm-b:not([open]) summary::after{content:"▸"}
+.mm-b summary::-webkit-details-marker{display:none}
+.mm-b ul{margin:0;padding:8px 14px 12px 32px;font-size:17px}
+.mm-b li{margin:4px 0}
+.start{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:18px 20px}
+.start .m{width:120px}
+.rules{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+/* quiz */
+.qtop{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dots{display:flex;gap:5px;flex:1;flex-wrap:wrap}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.dots i.ok{background:var(--ok)}.dots i.hp{background:var(--gold)}.dots i.no{background:var(--bad)}.dots i.now{outline:3px solid var(--c);outline-offset:1px}
+.combo{font-family:var(--f-disp);color:var(--na);font-size:18px;white-space:nowrap}
+.battle{display:grid;grid-template-columns:76px 1fr 96px;align-items:end;gap:10px;background:linear-gradient(180deg,var(--bg2),var(--soft));border:2px solid var(--line);border-radius:var(--r);padding:8px 14px 4px;margin-bottom:12px}
+.battle .hp{align-self:center;display:grid;gap:4px;justify-items:center;font-family:var(--f-disp);font-size:15px;color:var(--muted)}
+.battle .hp .pbar{width:100%;max-width:220px}
+.battle .hp .pbar i{background:var(--bad)}
+.qcard{padding:18px 20px 20px;border:3px solid var(--c)}
+.qtext{font-family:var(--f-disp);font-size:clamp(21px,3.4vw,26px);margin:8px 0 16px;line-height:1.55}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;border:3px solid var(--line);background:var(--soft);font-size:19px;min-height:62px;box-shadow:var(--press)}
+.opt .k{width:34px;height:34px;flex:none;border-radius:50%;background:var(--surface);border:2px solid var(--c);color:var(--c);display:grid;place-items:center;font-family:var(--f-disp);font-size:17px}
+.opt.sel{border-color:var(--c);background:var(--surface);box-shadow:0 4px 0 var(--c)}
+.opt.sel .k{background:var(--c);color:#fff}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);box-shadow:0 4px 0 var(--ok)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);box-shadow:none;opacity:.8}
+.opt.gone{opacity:.3;box-shadow:none;text-decoration:line-through}
+.opt:disabled{cursor:default}
+.numin{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.numin input{font-size:28px;font-family:var(--f-disp);padding:10px 16px;width:min(260px,100%);border-radius:16px;border:3px solid var(--c);background:var(--surface);font-variant-numeric:tabular-nums}
+.numin span{font-family:var(--f-disp);font-size:22px}
+.qbar{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+.hintbox{margin-top:14px;padding:12px 16px;border-radius:16px;background:var(--hint);border:2px dashed var(--gold);font-size:17px}
+.hintbox p{margin:4px 0}
+.fb{margin-top:16px;padding:14px 18px;border-radius:18px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.fb.ok{background:var(--ok-soft);border:3px solid var(--ok)}
+.fb.no{background:var(--bad-soft);border:3px solid var(--bad)}
+.fb.re{background:var(--hint);border:3px solid var(--gold)}
+.fb .who{width:70px}
+.fb h3{font-size:24px;margin-bottom:4px}
+.fb p{margin:3px 0;font-size:17px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;margin:0 3px;font-variant-numeric:tabular-nums}
+.fr span:first-child{border-bottom:2px solid currentColor;padding:0 3px}
+.minibar{display:grid;gap:6px;margin:10px 0;max-width:420px;font-size:17px;font-family:var(--f-body)}
+.mb-row{display:grid;grid-template-columns:60px 1fr 36px;gap:8px;align-items:center}
+.mb-row i{display:block;height:18px;border-radius:6px;background:var(--c)}
+.mini-t{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:10px 0;max-width:440px;font-size:16px;font-family:var(--f-body);text-align:center}
+.mini-t span{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:4px 0}
+/* result */
+.result{text-align:center;padding:22px 18px}
+.result .pics{display:flex;justify-content:center;align-items:flex-end;gap:10px}
+.result .pics .h{width:120px}.result .pics .m{width:110px}
+.result .big{font-size:56px;letter-spacing:8px;color:var(--gold);line-height:1.2}
+.result .big .off{color:var(--line)}
+.result h1{font-size:32px;margin:4px 0}
+.tally{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:12px 0}
+.tally div{background:var(--soft);border:2px solid var(--line);border-radius:16px;padding:8px 14px;min-width:100px}
+.tally b{display:block;font-family:var(--f-disp);font-size:28px;font-weight:400}
+.tally span{font-size:14px;color:var(--muted)}
+.gotstk{display:inline-flex;align-items:center;gap:10px;background:var(--hint);border:2px dashed var(--gold);border-radius:18px;padding:8px 16px;font-family:var(--f-disp);font-size:20px;margin:6px 0}
+.gotstk span{font-size:40px}
+@media (prefers-reduced-motion:no-preference){
+ .pop{animation:pop .4s cubic-bezier(.3,1.6,.6,1)}@keyframes pop{from{transform:scale(.8);opacity:.3}to{transform:none;opacity:1}}
+ .hit{animation:hit .5s}@keyframes hit{0%,100%{transform:none}20%{transform:translateX(-10px) rotate(-8deg)}40%{transform:translateX(10px) rotate(6deg)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+ .bob{animation:bob 2.4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-6px)}}
+ .realm,.opt,.stop .ball{transition:transform .12s}
+}
+.logo{width:44px;display:block;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}
+.ctile{background:var(--surface);border:3px solid var(--line);border-radius:20px;padding:12px;display:grid;grid-template-columns:64px 1fr;gap:4px 12px;align-items:center;box-shadow:var(--press)}
+.ctile.weak{border-color:var(--bad)}
+.ctile .ic{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:34px;background:var(--soft);border:3px solid var(--c);grid-row:span 2}
+.ctile h3{font-size:21px;line-height:1.25}
+.ctile .meter{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.ctile .meter .pbar{flex:1;height:10px}
+.ctile details{grid-column:1/-1;margin-top:4px}
+.ctile summary{list-style:none;cursor:pointer;font-family:var(--f-disp);color:var(--c);font-size:16px;display:inline-flex;gap:4px;align-items:center}
+.ctile summary::-webkit-details-marker{display:none}
+.ctile summary::before{content:"▶";font-size:12px}
+.ctile details[open] summary::before{content:"▼"}
+.ctile details p{margin:6px 0 0;padding:10px 12px;background:var(--hint);border-radius:14px;font-size:16px;line-height:1.6}
+.ctile .go{grid-column:1/-1;display:flex;justify-content:flex-end;margin-top:4px}
+.ctiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.subhead{display:flex;align-items:center;gap:12px;margin:30px 0 12px;padding:8px 14px;border-radius:20px;background:var(--c);color:#fff}
+.subhead .p{width:58px;background:rgba(255,255,255,.92);border-radius:50%;padding:4px;flex:none}
+.subhead .e{width:62px;flex:none;margin-left:auto;background:rgba(255,255,255,.92);border-radius:12px;padding:4px}
+.subhead h2{font-size:24px}
+.subhead small{display:block;font-size:14px;opacity:.9;font-family:var(--f-body)}
+.weakhead{display:flex;align-items:center;gap:12px;margin:18px 0 12px}
+.weakhead .m{width:70px;flex:none}
+.weakhead h2{font-size:24px}
+.heroimg{position:relative;display:block;width:100%}
+.heroimg img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:18%;border:3px solid var(--gold);box-shadow:0 4px 0 rgba(0,0,0,.18);background:var(--soft)}
+.heroimg.sad img{filter:saturate(.55) brightness(.92)}
+.heroimg .hb{position:absolute;top:-8px;right:-8px;font-size:clamp(14px,30%,30px);line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.stop .mini .heroimg img{border-width:2px}
+/* notes / album / history */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.filters button{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 16px;font-size:16px;font-family:var(--f-disp)}
+.filters button.on{background:var(--band);color:var(--band-ink);border-color:var(--band)}
+.witem{padding:12px 16px;margin-bottom:10px;border-left:8px solid var(--bad)}
+.witem.m{border-left-color:var(--ok);opacity:.75}
+.witem .q{font-family:var(--f-disp);font-size:19px;margin-bottom:6px}
+.witem .ans{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:16px}
+.witem .x{color:var(--bad)}.witem .o{color:var(--ok);font-weight:700}
+.witem .e{font-size:15px;color:var(--muted);margin-top:6px}
+.wg h3{font-size:19px;margin:16px 0 8px;color:var(--muted)}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.slot{background:var(--surface);border:3px solid var(--line);border-radius:20px;padding:12px 8px;text-align:center}
+.slot .s{font-size:46px;line-height:1.2;height:58px;display:grid;place-items:center}
+.slot.lock .s{filter:grayscale(1) brightness(.3);opacity:.35}
+.slot.gold{border-color:var(--gold);background:var(--hint)}
+.slot b{display:block;font-family:var(--f-disp);font-weight:400;font-size:16px;line-height:1.3;margin-top:4px}
+.slot small{font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{padding:12px 16px}
+.stat b{display:block;font-size:30px;font-family:var(--f-disp);font-weight:400}
+.stat span{font-size:14px;color:var(--muted)}
+.subbars{display:grid;gap:12px;padding:16px 18px}
+.subbar{display:grid;grid-template-columns:64px 1fr 130px;gap:12px;align-items:center;font-size:16px}
+.subbar b{font-family:var(--f-disp);font-weight:400;font-size:19px}
+.subbar .r{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:92px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px;align-items:center}
+.tl li:last-child{border-bottom:0}
+.tl .d{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.chartbox{padding:16px;overflow-x:auto}
+/* parent (adult) */
+.pin{max-width:380px;margin:10px auto;padding:24px;text-align:center}
+.pin input{font-size:30px;letter-spacing:12px;text-align:center;width:200px;padding:8px;border-radius:14px;border:3px solid var(--line);background:var(--soft)}
+.ptabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.ptabs button{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:6px 14px;font-size:15px}
+.ptabs button.on{background:var(--gold);color:var(--gold-ink);border-color:transparent;font-weight:700}
+.panel{padding:18px;margin-bottom:14px;font-size:16px}
+.panel h3{font-size:20px;margin-bottom:10px}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font-size:14px;font-weight:700;color:var(--muted)}
+.field input,.field select,.field textarea{padding:8px 10px;border-radius:10px;border:2px solid var(--line);background:var(--soft);width:100%;font-size:16px}
+.field textarea{min-height:110px;resize:vertical;font-size:15px}
+.lockrow{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.lockrow:last-child{border-bottom:0}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:5px 10px;font-size:14px}
+.seg button.on{background:var(--band);color:var(--band-ink)}
+.qrow{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.qrow .a{color:var(--ok);font-size:14px}
+.toggle{display:flex;align-items:center;gap:8px;font-size:15px}
+.foot{text-align:center;font-size:14px;color:var(--muted);margin-top:28px}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--band);color:var(--band-ink);padding:10px 20px;border-radius:999px;font-size:16px;z-index:20;font-family:var(--f-disp);white-space:nowrap}
+@media (max-width:560px){
+ .scene{grid-template-columns:96px 1fr;padding:12px}.scene .who{width:96px}.bubble{font-size:18px}
+ .start{grid-template-columns:1fr;justify-items:center;text-align:center}.start .rules{justify-content:center}
+ .battle{grid-template-columns:58px 1fr 74px}
+ .subbar{grid-template-columns:56px 1fr}.subbar .r{grid-column:1/-1;text-align:left}
+ .tl li{grid-template-columns:1fr auto}.tl .d{grid-column:1/-1}
+ .me .xpbar{display:none}
+ .talk{grid-template-columns:64px 1fr}
+}
+</style>
+<div id="app"></div>
+<div id="toast" class="toast" hidden></div>
+<script>
+window.addEventListener("error",function(e){var d=document.getElementById("app");if(d&&!d.innerHTML)d.innerHTML='<div style="margin:20px;padding:16px;border:3px solid #E0464B;border-radius:16px;background:#fff;color:#222;font:16px sans-serif">APP 載入失敗：'+String(e.message).replace(/</g,"&lt;")+'（第 '+e.lineno+' 行）<br>請截圖給 Claude。</div>'});
+/* ========== 工具 ========== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const hs=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))|0;return (h>>>0).toString(36)};
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const strip=s=>String(s??'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+function uniq(correct,c,n=3){const o=[];for(const x of c){if(x!==correct&&!o.includes(x))o.push(x);if(o.length>=n)break}return o}
+function MC(c,q,correct,cands,e,html){return{t:'mc',c,q,o:[correct,...uniq(correct,cands)],a:0,e,html:!!html}}
+function NUM(c,q,a,e,unit,html){return{t:'num',c,q,a,e,unit:unit||'',html:!!html}}
+const F=(a,d)=>`<span class="fr"><span>${a}</span><span>${d}</span></span>`;
+const FM=(w,a,d)=>`${w}${F(a,d)}`;
+const PL=['個位','十位','百位','千位','萬位','十萬位','百萬位','千萬位'];
+function eight(){const d=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,8);if(d[0]===0)[d[0],d[1]]=[d[1],d[0]];return d}
+function bars(L,V){const m=Math.max(...V);return `<div class="minibar">${L.map((l,i)=>`<div class="mb-row"><span>${l}</span><i style="width:${V[i]/m*100}%"></i><b>${V[i]}</b></div>`).join('')}</div>`}
+
+/* ========== 觀念卡 ========== */
+const CON={
+'z-xing':['形近字','字形很像的字，看部首或部件分辨意思。例如：警（言，和說話提醒有關）／驚（馬，和害怕有關）。'],
+'z-duoyin':['多音字','同一個字有不同讀音，意思也不同，要看它在哪個詞裡。例如：彈琴（ㄊㄢˊ）、子彈（ㄉㄢˋ）。'],
+'z-bushou':['部首與部件','部首常表示意思，部件常提示讀音。用同一個部件，可以一次記住一群字：提、題、堤。'],
+'z-xu':['順敘與倒敘','順敘：照時間先後寫。倒敘：先寫結果或最精彩的片段，再回頭交代經過。'],
+'z-ju':['句型與句子','認識複句：轉折（沒想到…竟然…）、假設（如果…就…）、目的（為了…）、選擇（不是…就是…）。句子要刪去重複的贅詞。'],
+'z-ci':['詞語意思','用上下文推論詞義；認識近義詞、反義詞、四字詞語和摹聲詞。'],
+'z-person':['人物傳記','讀傳記抓三個重點：重要事蹟、人物特質、對別人或社會的影響。'],
+'z-read':['閱讀策略','把意思相關的自然段合成意義段，再替每段寫重點，最後串成全文大意。'],
+'z-text':['說明文與非連續文本','說明文客觀介紹事物，常用總分結構；非連續文本用表格、圖表、地圖呈現資訊。'],
+'z-write':['寫作技巧','擴寫：加入外形、動作、心情等細節，把短句變豐富；改寫：換角度或換文體重寫。'],
+'m-place':['位名與位值','由右往左：個、十、百、千、萬、十萬、百萬、千萬。數字在哪一位，就代表幾個那一位的值。'],
+'m-read':['大數的讀寫','以「萬」為分界：萬以上照讀，萬以下一定要寫滿 4 位，不足補 0。'],
+'m-compare':['大數比大小','位數多的比較大；位數一樣，從最高位開始一位一位比。'],
+'m-bigadd':['大數加減','把數字寫成直式，位數對齊，從個位算起，記得進位和借位。'],
+'m-mul':['乘法直式','從個位乘起；乘十位數字時，結果要從十位開始寫（因為它代表幾個十）。'],
+'m-mulword':['乘法應用題','「每份多少、有幾份，求全部」用乘法。'],
+'m-angle-type':['角的種類','銳角＜90度；直角＝90度；鈍角在 90～180 度之間；平角＝180度；周角＝360度。'],
+'m-angle-calc':['角的合成與分解','兩個角合起來就相加；平角分成兩角，用 180 減；周角分成兩角，用 360 減。'],
+'m-rotate':['旋轉角','時鐘分針走一圈是 360 度，每走一個數字（5 分鐘）轉 30 度。'],
+'m-div':['除法直式','從最高位除起；餘數一定比除數小；驗算：除數×商＋餘數＝被除數。'],
+'m-divword':['除法應用題','「最多可以裝幾包」→剩下的不算（捨去）；「至少要幾輛車」→剩下的也要算一輛（進一）。'],
+'m-km':['公里','1 公里＝1000 公尺。先換成相同單位再比較或加減。'],
+'m-tri-side':['以邊分類三角形','正三角形：三邊等長、三個角都是 60 度；等腰三角形：兩邊等長，兩個底角相等。'],
+'m-tri-angle':['以角分類三角形','三個角都是銳角→銳角三角形；有一個直角→直角三角形；有一個鈍角→鈍角三角形。'],
+'m-congruent':['全等圖形','形狀、大小完全一樣的圖形。全等圖形的對應邊相等、對應角相等。'],
+'m-dec':['二位小數','小數點右邊第一位是十分位，第二位是百分位。1 公分＝0.01 公尺。'],
+'m-decadd':['小數加減','小數點對齊再計算，就和整數直式一樣。'],
+'m-order':['四則運算順序','括號先算 → 先乘除、後加減 → 同一級由左往右。'],
+'m-twostep':['兩步驟應用題','先想清楚要先算什麼，再寫成一個算式（併式）。例如找錢＝付的錢－（單價×數量）。'],
+'m-frac':['分數的種類','真分數：分子＜分母；假分數：分子≥分母；帶分數：整數加上真分數。'],
+'m-fracconv':['假分數與帶分數','假分數→帶分數：分子÷分母，商是整數、餘數是新分子。帶分數→假分數：整數×分母＋分子。'],
+'m-fracadd':['同分母分數計算','分母不變，分子相加減；整數倍就是分子乘以那個整數。'],
+'m-graph':['統計圖','長條圖比較數量多少；折線圖看變化趨勢。先看標題、單位和刻度。'],
+'n-soil':['地表物質','顆粒大小：礫石＞沙＞土壤。土壤顆粒最小，能保水、有養分。'],
+'n-water':['流水作用','流水有侵蝕、搬運、堆積三種作用；顆粒越小，被搬得越遠。'],
+'n-protect':['水土保持','過度開發山林會造成土石流；種樹、保護植被可以抓住土壤。'],
+'n-quake':['地震防災','地震時「趴下、掩護、穩住」；平時準備避難包、參加防災演練。'],
+'n-plant':['水生植物','漂浮性（布袋蓮）、沉水性（水蘊草）、浮葉性（睡蓮）、挺水性（荷花）。'],
+'n-fish':['魚的構造','魚的外形分為頭部、軀幹、鰭；用鰓呼吸，擺動鰭前進與轉向。'],
+'n-env':['愛護水域','不亂丟垃圾、不放生外來種；不同環境會影響人們的食物種類。'],
+'n-sound':['聲音','物體振動產生聲音；振動越大聲音越大；聲音能在固體、液體、氣體中傳播。'],
+'n-light':['光的特性','光直線前進；被不透光物體擋住會形成影子；光反射進入眼睛，我們才看得見。'],
+'n-reflect':['光的反射','光照到鏡面會反射；鏡子角度改變，反射方向也改變。'],
+'n-use':['聲光應用','生活中利用聲音和光來警示、指示、裝飾和娛樂。'],
+'n-circuit':['通路與斷路','電流能繞一圈回到電池就是通路（燈亮）；中間斷掉就是斷路（燈不亮）。'],
+'n-conductor':['導體','金屬容易導電；塑膠、木頭、橡皮不容易導電，可用來防止觸電。'],
+'n-series':['串聯與並聯','電池串聯燈較亮；燈泡串聯拿掉一個全熄；燈泡並聯拿掉一個其他仍亮。'],
+'n-safety':['用電安全','濕手不碰電器、延長線不超載、拔插頭要握插頭本體。'],
+'s-map4':['地圖四要素','圖名、圖例、方向標、比例尺。'],
+'s-dir':['方位','方向標箭頭指北；沒有方向標時，上北、下南、左西、右東。'],
+'s-scale':['比例尺','1：10000 表示地圖上 1 公分＝實際 10000 公分＝100 公尺。'],
+'s-maptype':['地圖種類','行政區域圖看範圍界線；交通路線圖看路線站名；電子地圖可縮放、導航。'],
+'s-land':['地形','平原低平、盆地四周高中間低、台地頂平四周陡、山地海拔高坡度大。'],
+'s-climate':['臺灣氣候','夏秋颱風、五六月梅雨、冬季東北季風讓北部多雨。'],
+'s-landuse':['土地利用','地形氣候影響居民怎麼用土地：山坡種茶、平原種稻；開發也會改變環境。'],
+'s-pop':['人口組成','從年齡、性別、族群、職業等方面觀察一個地方的人口。'],
+'s-aging':['少子化與高齡化','出生人數變少是少子化；65 歲以上比例變高是高齡化，需要長照與樂齡服務。'],
+'s-migrate':['人口遷移','工作機會、交通、教育等因素會讓人口移入或移出。'],
+'s-food':['飲食文化','客家擂茶、粄條；原住民族小米、竹筒飯；新住民帶來各國料理。'],
+'s-cloth':['服飾文化','傳統服飾有族群圖紋與意義，常在祭典穿著，也能創新運用。'],
+'s-lang':['語言與命名','泰雅族親子連名、達悟族親從子名；尊重每一種語言。'],
+'s-respect':['尊重多元','文化交流可能有衝突，也能合作和創新，關鍵是互相尊重。'],
+'s-fest':['傳統節慶','春節、元宵（燈謎）、端午（龍舟粽子）、中秋（賞月）。'],
+'s-indig':['原住民族祭典','阿美族豐年祭、達悟族飛魚祭、賽夏族矮靈祭、布農族射耳祭。'],
+'s-modern':['現代節日','兒童節 4/4、母親節（五月第二個星期日）、父親節 8/8、教師節 9/28。'],
+'s-rite':['生命禮俗','出生（滿月、抓周）、成年、婚禮、喪禮等人生重要儀式。'],
+'s-inquiry':['探究方法','訪問耆老、查資料、實地踏查，再比對可靠來源、整理成圖表。'],
+'s-history':['家鄉變遷','古蹟、老照片反映歷史；社會經濟發展會改變土地利用。']
+};
+
+/* ========== 數學出題器 ========== */
+const GEN={
+ma1:[
+ ['m-place',()=>{const d=eight(),n=d.join(''),k=R(0,7),x=d[7-k];return MC('m-place',`在 ${n} 中，數字 ${x} 在哪一位？`,PL[k],shuffle(PL),`由右往左依序是：個、十、百、千、萬、十萬、百萬、千萬位，所以 ${x} 在${PL[k]}。`)}],
+ ['m-place',()=>{const d=eight(),n=d.join('');let k=R(0,7);while(d[7-k]===0)k=R(0,7);const x=d[7-k],v=x*10**k;return NUM('m-place',`在 ${n} 中，數字 ${x} 代表多少？`,v,`${x} 在${PL[k]}，代表 ${x} 個 ${10**k}，也就是 ${v}。`)}],
+ ['m-read',()=>{const a=R(100,9999),b=pick([R(1,99),R(100,999),R(1000,9999),R(10,90)*10]),v=a*10000+b;return NUM('m-read',`「${a}萬${b}」用數字寫是多少？`,v,`萬以下要寫滿 4 位：${a} 和 ${String(b).padStart(4,'0')}，合起來是 ${v}。`)}],
+ ['m-compare',()=>{const x=R(10000000,90000000);const y=x+pick([-1,1])*R(1,9)*10**R(2,5);const b=Math.max(x,y),s=Math.min(x,y);return MC('m-compare',`${x} 和 ${y}，哪一個比較大？`,String(b),[String(s),'一樣大'],`兩個都是 8 位數，從千萬位開始比，第一個不一樣的位數比較大的，那個數就比較大：${b}。`)}],
+ ['m-bigadd',()=>{const a1=R(20,80),a2=R(100,9999),b1=R(10,60),b2=R(100,9999),A=a1*10000+a2,B=b1*10000+b2;if(Math.random()<.5)return NUM('m-bigadd',`${a1}萬${a2} ＋ ${b1}萬${b2} ＝？（用數字寫）`,A+B,`換成數字 ${A}＋${B}，位數對齊用直式算，答案是 ${A+B}。`);const[P,Q]=A>=B?[[a1,a2,A],[b1,b2,B]]:[[b1,b2,B],[a1,a2,A]];return NUM('m-bigadd',`${P[0]}萬${P[1]} － ${Q[0]}萬${Q[1]} ＝？（用數字寫）`,P[2]-Q[2],`換成數字 ${P[2]}－${Q[2]}，位數對齊用直式算，答案是 ${P[2]-Q[2]}。`)}]
+],
+ma2:[
+ ['m-mul',()=>{const a=R(1000,9999),b=R(2,9);return NUM('m-mul',`${a} × ${b} ＝？`,a*b,`從個位乘起，記得進位：${a}×${b}＝${a*b}。`)}],
+ ['m-mul',()=>{const a=R(12,99),b=R(12,99);return NUM('m-mul',`${a} × ${b} ＝？`,a*b,`${a}×${b%10}＝${a*(b%10)}，${a}×${Math.floor(b/10)*10}＝${a*Math.floor(b/10)*10}，相加得 ${a*b}。`)}],
+ ['m-mul',()=>{const a=R(100,999),b=R(12,99);return NUM('m-mul',`${a} × ${b} ＝？`,a*b,`${a}×${b%10}＝${a*(b%10)}，${a}×${Math.floor(b/10)*10}＝${a*Math.floor(b/10)*10}，相加得 ${a*b}。`)}],
+ ['m-mul',()=>{const a=R(1000,4999),b=R(12,49);return NUM('m-mul',`${a} × ${b} ＝？`,a*b,`${a}×${b%10}＝${a*(b%10)}，${a}×${Math.floor(b/10)*10}＝${a*Math.floor(b/10)*10}，相加得 ${a*b}。`)}],
+ ['m-mulword',()=>{const p=R(12,48),n=R(15,85);return NUM('m-mulword',`每箱有 ${p} 瓶果汁，${n} 箱共有幾瓶？`,p*n,`求全部用乘法：${p}×${n}＝${p*n}（瓶）。`,'瓶')}],
+ ['m-mulword',()=>{const p=R(35,280),n=R(12,36);return NUM('m-mulword',`一本故事書 ${p} 元，買 ${n} 本要付多少元？`,p*n,`${p}×${n}＝${p*n}（元）。`,'元')}]
+],
+ma3:[
+ ['m-angle-type',()=>{const L=[[R(15,85),'銳角'],[90,'直角'],[R(95,175),'鈍角'],[180,'平角'],[360,'周角']],x=pick(L);return MC('m-angle-type',`一個角是 ${x[0]} 度，它是什麼角？`,x[1],shuffle(['銳角','直角','鈍角','平角','周角']),`銳角＜90度，直角＝90度，鈍角在 90～180 度之間，平角＝180度，周角＝360度。`)}],
+ ['m-angle-calc',()=>{const a=R(20,90),b=R(20,80);return NUM('m-angle-calc',`∠甲＝${a} 度，∠乙＝${b} 度，兩個角合起來是幾度？`,a+b,`角的合成用加法：${a}＋${b}＝${a+b}（度）。`,'度')}],
+ ['m-angle-calc',()=>{const a=R(15,165);return NUM('m-angle-calc',`一個平角被分成兩個角，其中一個是 ${a} 度，另一個是幾度？`,180-a,`平角是 180 度：180－${a}＝${180-a}（度）。`,'度')}],
+ ['m-angle-calc',()=>{const a=R(30,330);return NUM('m-angle-calc',`一個周角被分成兩個角，其中一個是 ${a} 度，另一個是幾度？`,360-a,`周角是 360 度：360－${a}＝${360-a}（度）。`,'度')}],
+ ['m-rotate',()=>{const k=R(1,11);return NUM('m-rotate',`分針從 12 順時針走到 ${k}，旋轉了幾度？`,30*k,`每走一個數字轉 30 度：30×${k}＝${30*k}（度）。`,'度')}]
+],
+ma4:[
+ ['m-div',()=>{const d=R(2,9),q=R(Math.ceil(1000/d),Math.floor(9999/d)),n=d*q;return NUM('m-div',`${n} ÷ ${d} ＝？`,q,`從千位開始除：${n}÷${d}＝${q}。驗算 ${d}×${q}＝${n}。`)}],
+ ['m-div',()=>{const d=R(12,49),q=R(Math.ceil(100/d),Math.floor(999/d));let r=R(1,d-1),n=d*q+r;if(n>999){r=0;n=d*q}const askR=r>0&&Math.random()<.5;return NUM('m-div',`${n} ÷ ${d}，${askR?'餘數':'商'}是多少？`,askR?r:q,`${n}÷${d}＝${q}${r?'…'+r:''}。驗算：${d}×${q}${r?'＋'+r:''}＝${n}。`)}],
+ ['m-div',()=>{const d=R(11,24),q=R(2,Math.floor(99/d));let r=R(0,d-1);if(d*q+r>99)r=99-d*q;const n=d*q+r;return NUM('m-div',`${n} ÷ ${d} 的商是多少？`,q,`${d}×${q}＝${d*q}，${n}－${d*q}＝${r}，所以商是 ${q}${r?'，餘 '+r:''}。`)}],
+ ['m-divword',()=>{const d=R(6,15),q=R(12,60),r=R(1,d-1),n=d*q+r;return NUM('m-divword',`有 ${n} 顆糖果，每包裝 ${d} 顆，最多可以裝成幾包？`,q,`${n}÷${d}＝${q}…${r}，剩下 ${r} 顆不夠裝一包，所以最多 ${q} 包。`,'包')}],
+ ['m-divword',()=>{const d=R(25,45),q=R(3,12),r=R(1,d-1),n=d*q+r;return NUM('m-divword',`有 ${n} 位同學去校外教學，每輛遊覽車坐 ${d} 人，至少需要幾輛車？`,q+1,`${n}÷${d}＝${q}…${r}，剩下的 ${r} 人也要坐車，所以要 ${q}＋1＝${q+1} 輛。`,'輛')}]
+],
+ma5:[
+ ['m-km',()=>{const a=R(1,9),b=R(5,999);return NUM('m-km',`${a} 公里 ${b} 公尺＝？公尺`,a*1000+b,`1 公里＝1000 公尺：${a}×1000＋${b}＝${a*1000+b}。`,'公尺')}],
+ ['m-km',()=>{const m=R(1001,9999),k=Math.floor(m/1000),r=m%1000;return NUM('m-km',`${m} 公尺＝□公里 ${r} 公尺，□是多少？`,k,`每 1000 公尺是 1 公里，${m} 公尺＝${k} 公里 ${r} 公尺。`,'公里')}],
+ ['m-km',()=>{const a1=R(1,5),b1=R(100,900),a2=R(1,4),b2=R(100,900),v=a1*1000+b1+a2*1000+b2;return NUM('m-km',`${a1} 公里 ${b1} 公尺 ＋ ${a2} 公里 ${b2} 公尺＝？公尺`,v,`全部換成公尺：${a1*1000+b1}＋${a2*1000+b2}＝${v}。`,'公尺')}],
+ ['m-km',()=>{const a1=R(4,9),b1=R(100,900),a2=R(1,3),b2=R(100,900),v=a1*1000+b1-(a2*1000+b2);return NUM('m-km',`${a1} 公里 ${b1} 公尺 － ${a2} 公里 ${b2} 公尺＝？公尺`,v,`全部換成公尺：${a1*1000+b1}－${a2*1000+b2}＝${v}。`,'公尺')}],
+ ['m-km',()=>{const k=R(2,6),x=R(10,90),m=k*1000+R(100,900),A=k*1000+x;const a=`${k} 公里 ${x} 公尺`,b=`${m} 公尺`;return MC('m-km',`「${a}」和「${b}」，哪一個比較長？`,A>m?a:b,[A>m?b:a,'一樣長'],`${a}＝${A} 公尺，所以 ${A>m?a:b}比較長。`)}]
+],
+ma6:[
+ ['m-tri-side',()=>{const L=['正三角形（三邊等長）','等腰三角形（只有兩邊等長）','三邊都不一樣長'],t=R(0,2);let s;if(t===0){const a=R(3,12);s=[a,a,a]}else if(t===1){const a=R(5,12);let b=a+pick([-2,-1,1,2,3]);s=shuffle([a,a,b])}else{const a=R(4,7),b=a+R(1,2),c=b+1;s=shuffle([a,b,c])}return MC('m-tri-side',`一個三角形的三邊長是 ${s.join('、')} 公分，它是哪一種三角形？`,L[t],L,`看邊長：三邊等長是正三角形；只有兩邊等長是等腰三角形。正三角形也可以看成特別的等腰三角形。`)}],
+ ['m-tri-angle',()=>{const L=['銳角三角形','直角三角形','鈍角三角形'],t=R(0,2);let g;if(t===0){const a=R(50,80),b=R(50,80);g=[a,b,180-a-b]}else if(t===1){const x=R(20,70);g=[90,x,90-x]}else{const big=R(95,150),x=R(10,170-big);g=[big,x,180-big-x]}g=shuffle(g);return MC('m-tri-angle',`一個三角形的三個角是 ${g.join('度、')}度，它是哪一種三角形？`,L[t],L,`看最大的角：小於 90 度→銳角三角形；等於 90 度→直角三角形；大於 90 度→鈍角三角形。`)}],
+ ['m-congruent',()=>{const a=R(3,6),b=a+R(1,3),c=b+R(1,2);return NUM('m-congruent',`三角形甲和三角形乙全等，甲的三邊是 ${a}、${b}、${c} 公分。乙最長的邊是幾公分？`,c,`全等圖形對應邊相等，所以乙最長的邊也是 ${c} 公分。`,'公分')}]
+],
+ma7:[
+ ['m-dec',()=>{const d=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,3),s=`${d[0]}.${d[1]}${d[2]}`,k=R(0,2),N=['個位','十分位','百分位'];return MC('m-dec',`在 ${s} 中，數字 ${d[k]} 在哪一位？`,N[k],['個位','十分位','百分位','十位'],`小數點左邊是個位，右邊第一位是十分位，第二位是百分位。`)}],
+ ['m-dec',()=>{const a=R(1,9),b=R(1,99),v=a+b/100;return NUM('m-dec',`${a} 公尺 ${b} 公分＝？公尺`,v,`1 公分＝0.01 公尺，${b} 公分＝${(b/100).toFixed(2)} 公尺，合起來是 ${v.toFixed(2)} 公尺。`,'公尺')}],
+ ['m-dec',()=>{const a=R(1,9),t=R(1,7),h=R(1,9),x=`${a}.${t+1}`,y=`${a}.${t}${h}`;return MC('m-dec',`${x} 和 ${y}，哪一個比較大？`,x,[y,'一樣大'],`整數一樣，先比十分位：${t+1}＞${t}，所以 ${x} 比較大（${x} 也可以寫成 ${x}0）。`)}],
+ ['m-decadd',()=>{const x=R(100,899),y=R(100,899);return NUM('m-decadd',`${(x/100).toFixed(2)} ＋ ${(y/100).toFixed(2)} ＝？`,(x+y)/100,`小數點對齊，從百分位加起：${((x+y)/100).toFixed(2)}。`)}],
+ ['m-decadd',()=>{const x=R(300,999),y=R(100,x-50);return NUM('m-decadd',`${(x/100).toFixed(2)} － ${(y/100).toFixed(2)} ＝？`,(x-y)/100,`小數點對齊，不夠減就向前一位借：${((x-y)/100).toFixed(2)}。`)}]
+],
+ma8:[
+ ['m-order',()=>{const a=R(10,99),b=R(2,12),c=R(2,12);return NUM('m-order',`${a} ＋ ${b} × ${c} ＝？`,a+b*c,`先乘後加：${b}×${c}＝${b*c}，${a}＋${b*c}＝${a+b*c}。`)}],
+ ['m-order',()=>{const a=R(5,30),b=R(5,30),c=R(2,9);return NUM('m-order',`（${a} ＋ ${b}）× ${c} ＝？`,(a+b)*c,`括號先算：${a}＋${b}＝${a+b}，${a+b}×${c}＝${(a+b)*c}。`)}],
+ ['m-order',()=>{const c=R(2,9),b=c*R(2,12),a=R(b/c+5,150);return NUM('m-order',`${a} － ${b} ÷ ${c} ＝？`,a-b/c,`先除後減：${b}÷${c}＝${b/c}，${a}－${b/c}＝${a-b/c}。`)}],
+ ['m-order',()=>{const a=R(6,25),b=R(3,9),c=R(5,a*b-1);return NUM('m-order',`${a} × ${b} － ${c} ＝？`,a*b-c,`先乘後減：${a}×${b}＝${a*b}，${a*b}－${c}＝${a*b-c}。`)}],
+ ['m-twostep',()=>{const p=R(12,45),n=R(2,6),cost=p*n,pay=[100,200,500,1000].find(x=>x>cost);return NUM('m-twostep',`買 ${n} 枝筆，每枝 ${p} 元，付了 ${pay} 元，應該找回多少元？`,pay-cost,`併式：${pay}－${p}×${n}＝${pay}－${cost}＝${pay-cost}（元）。`,'元')}],
+ ['m-twostep',()=>{const c=R(3,8),t=c*R(4,12),a=R(5,t-5),b=t-a;return NUM('m-twostep',`媽媽買了 ${a} 顆蘋果和 ${b} 顆橘子，平分給 ${c} 個小朋友，每人分到幾顆？`,t/c,`併式：（${a}＋${b}）÷${c}＝${t}÷${c}＝${t/c}（顆）。`,'顆')}]
+],
+ma9:[
+ ['m-fracconv',()=>{const d=R(3,9),w=R(1,4),r=R(1,d-1),n=w*d+r;return MC('m-fracconv',`假分數 ${F(n,d)} 化成帶分數是多少？`,FM(w,r,d),[FM(w+1,r,d),FM(w,r===d-1?1:r+1,d),FM(w>1?w-1:w+2,r,d),FM(r,w,d)],`${n}÷${d}＝${w}…${r}，商 ${w} 是整數部分，餘數 ${r} 是分子：${FM(w,r,d)}。`,true)}],
+ ['m-fracconv',()=>{const d=R(3,9),w=R(1,4),r=R(1,d-1),n=w*d+r;return MC('m-fracconv',`帶分數 ${FM(w,r,d)} 化成假分數是多少？`,F(n,d),[F(w+r,d),F(n+1,d),F(w*r+d,d),F(n,d+1)],`整數×分母＋分子：${w}×${d}＋${r}＝${n}，所以是 ${F(n,d)}。`,true)}],
+ ['m-fracadd',()=>{const d=R(5,12),a=R(1,d-2),b=R(1,d-1-a);return MC('m-fracadd',`${F(a,d)} ＋ ${F(b,d)} ＝？`,F(a+b,d),[F(a+b,d+d),F(a+b+1,d),F(a*b,d),F(a+b,d-1)],`同分母相加，分母不變、分子相加：${a}＋${b}＝${a+b}，答案 ${F(a+b,d)}。`,true)}],
+ ['m-fracadd',()=>{const d=R(5,12),a=R(3,d-1),b=R(1,a-1);return MC('m-fracadd',`${F(a,d)} － ${F(b,d)} ＝？`,F(a-b,d),[F(a+b,d),F(a-b+1,d),F(a-b,d+1),F(Math.max(1,a-b-1),d)],`同分母相減，分母不變、分子相減：${a}－${b}＝${a-b}，答案 ${F(a-b,d)}。`,true)}],
+ ['m-fracadd',()=>{const d=R(5,9),a=R(1,3),k=R(2,4);return MC('m-fracadd',`${F(a,d)} × ${k} ＝？`,F(a*k,d),[F(a*k,d*k),F(a+k,d),F(a,d*k),F(a*k+1,d)],`分數的整數倍：分母不變，分子×${k}：${a}×${k}＝${a*k}，答案 ${F(a*k,d)}。`,true)}],
+ ['m-frac',()=>{const d=R(3,9),n=pick([R(1,d-1),R(d,d*2+3)]);const t=n<d?'真分數':'假分數';return MC('m-frac',`${F(n,d)} 是什麼分數？`,t,['真分數','假分數','帶分數'],`分子 ${n} ${n<d?'小於':'大於或等於'}分母 ${d}，所以是${t}。`,true)}],
+ ['m-frac',()=>{const d=R(5,12),a=R(1,d-1);let b=R(1,d-1);while(b===a)b=R(1,d-1);return MC('m-frac',`${F(a,d)} 和 ${F(b,d)}，哪一個比較大？`,F(Math.max(a,b),d),[F(Math.min(a,b),d),'一樣大'],`分母相同，分子越大分數越大。`,true)}]
+],
+ma10:[
+ ['m-graph',()=>{const L=shuffle(['蘋果','香蕉','芭樂','葡萄','西瓜','鳳梨']).slice(0,4),V=shuffle([...Array(26).keys()].map(x=>x+5)).slice(0,4),m=Math.max(...V);return MC('m-graph',`四年級同學最喜歡的水果（人數）：${bars(L,V)}最多人喜歡哪一種？`,L[V.indexOf(m)],L,`長條最長的就是人數最多的：${L[V.indexOf(m)]}（${m} 人）。`,true)}],
+ ['m-graph',()=>{const L=shuffle(['籃球','躲避球','跳繩','羽球','游泳']).slice(0,4),V=shuffle([...Array(26).keys()].map(x=>x+5)).slice(0,4),m=Math.max(...V),n=Math.min(...V);return NUM('m-graph',`班上喜歡的運動（人數）：${bars(L,V)}最多的和最少的相差幾人？`,m-n,`最多 ${m} 人，最少 ${n} 人：${m}－${n}＝${m-n}（人）。`,'人',true)}],
+ ['m-graph',()=>{const L=['一班','二班','三班','四班'],V=L.map(()=>R(8,30)),t=V.reduce((a,b)=>a+b,0);return NUM('m-graph',`各班借書的本數：${bars(L,V)}四個班一共借了幾本？`,t,`把每一條長條的數量加起來：${V.join('＋')}＝${t}（本）。`,'本',true)}],
+ ['m-graph',()=>{const D=['一','二','三','四','五'],T=D.map(()=>R(18,31));const m=Math.max(...T),i=T.indexOf(m);return MC('m-graph',`某週的最高氣溫（°C）：<div class="mini-t">${D.map(d=>`<span>星期${d}</span>`).join('')}${T.map(t=>`<span>${t}</span>`).join('')}</div>畫成折線圖時，哪一天的點會在最高的位置？`,'星期'+D[i],D.map(d=>'星期'+d),`折線圖的點越高代表數值越大，${m}°C 最高，是星期${D[i]}。`,true)}]
+]};
+
+/* ========== 課程資料（康軒國語、康軒數學、康軒自然、翰林社會；四上） ========== */
+const SUBJ={
+zh:{name:'國語',realm:'言靈森林',ver:'康軒版・四上（第 7 冊）',crest:'語',units:[
+{id:'zh1',name:'歡樂好時光',goal:'會分辨形近字、多音字與部首，認識順敘法和倒敘法，能刪去句子中的贅詞。',
+ lessons:['第 1 課　水陸小高手','第 2 課　放學後','第 3 課　我的籃球夢','學習地圖一　順敘與倒敘'],
+ map:[['課文',['水陸小高手：童詩，寫下課後的活動','放學後：用感官觀察生活','我的籃球夢：用倒敘法記事']],['識字',['耳部：聽、聰、聯','女部：姑、妹、始','形近字：警／驚、幸／辛','多音字：彈（ㄊㄢˊ／ㄉㄢˋ）']],['語詞與句子',['多義詞：一般','人稱代名詞','刪去贅詞']],['寫作',['順敘：照時間先後','倒敘：先寫結果再回頭說']]],
+ qs:[
+ ['z-xing','聽到雷聲，弟弟嚇得大吃一（　）。',['驚','警','敬','境'],0,'「驚」下面是「馬」，表示害怕、吃驚；「警」下面是「言」，和說話提醒有關，如警告、警察。'],
+ ['z-xing','爸爸每天工作很（　）苦，我們要體諒他。',['辛','幸','新','心'],0,'「辛苦」的辛表示勞累；「幸」是幸運、幸福的幸。'],
+ ['z-duoyin','下面哪一個「彈」要讀作ㄉㄢˋ？',['子彈','彈琴','彈性','彈跳'],0,'「彈」當名詞（子彈、炸彈）讀ㄉㄢˋ；當動作（彈琴、彈跳）讀ㄊㄢˊ。'],
+ ['z-bushou','「聽、聰、聯」三個字的部首是哪一個？',['耳','心','口','糸'],0,'這三個字都和耳朵有關，部首是「耳」。'],
+ ['z-bushou','「姑、妹、始」三個字共同的部首是什麼？',['女','古','未','口'],0,'女部的字常和女性或家人稱謂有關。'],
+ ['z-xu','作文開頭先寫「最後一秒，我投進了致勝的一球！」，接著才寫練球的經過，這是哪一種寫法？',['倒敘法','順敘法','對話法','列點法'],0,'倒敘法：先寫結果或最精彩的片段，再回頭交代經過，能吸引讀者。'],
+ ['z-xu','照「早上→中午→晚上」的時間先後寫一天的事，是哪一種寫法？',['順敘法','倒敘法','譬喻法','擬人法'],0,'順敘法：照事情發生的時間先後來寫，條理清楚。'],
+ ['z-ju','「我們大家一起都去公園玩。」刪掉多餘的詞後，哪一句最通順？',['我們一起去公園玩。','我們大家都一起去去公園玩。','大家我們去公園玩。','我們都大家去公園玩。'],0,'「我們」和「大家」意思重複，「一起」和「都」也重複，刪去贅詞句子更簡潔。'],
+ ['z-ci','「他們兩個人一般高。」句中的「一般」是什麼意思？',['一樣','普通','一種','很少'],0,'同一個詞在不同句子意思不同，要看上下文。這裡的「一般」表示「一樣」。'],
+ ['z-ju','下面哪一個是「第三人稱」代名詞？',['他們','我們','你們','咱們'],0,'第一人稱：我、我們；第二人稱：你、你們；第三人稱：他、她、它、他們。']]},
+{id:'zh2',name:'人物寫真',goal:'讀懂人物傳記的重點，認識馬偕與海倫‧凱勒的事蹟，學會把自然段合成意義段。',
+ lessons:['第 4 課　永遠的馬偕','第 5 課　假如給我三天光明','第 6 課　攀登生命的高峰','學習地圖二　人物傳記','閱讀階梯一　種樹的人'],
+ map:[['課文',['永遠的馬偕：加拿大傳教士，在淡水行醫辦學','假如給我三天光明：海倫‧凱勒','攀登生命的高峰：勇敢面對困難']],['識字',['「皆」部件：階、偕、楷','毛部：毯、毫','形近字：朗／郎','多音字：磨（ㄇㄛˊ／ㄇㄛˋ）']],['語詞與句子',['千變萬化、不知所措','當……就……','同音詞辨認']],['閱讀',['傳記三重點：事蹟、特質、影響','自然段→意義段→大意']]],
+ qs:[
+ ['z-person','馬偕來到臺灣北部行醫、傳教，他原本來自哪個國家？',['加拿大','英國','美國','荷蘭'],0,'馬偕是加拿大籍傳教士，在淡水一帶行醫、拔牙、辦學校，對臺灣貢獻很大。'],
+ ['z-person','下面哪一件事是馬偕在臺灣做過的？',['在淡水辦學校、幫人拔牙看病','發明電燈','建造萬里長城','寫交響曲'],0,'馬偕在淡水設立醫館和學堂，也替很多人拔牙治病。'],
+ ['z-person','海倫‧凱勒小時候生了一場重病，之後失去了哪些能力？',['視力和聽力','味覺和嗅覺','走路能力','寫字能力'],0,'海倫‧凱勒看不見也聽不見，靠著蘇利文老師的教導，用觸摸學會文字。'],
+ ['z-person','耐心教導海倫‧凱勒認識文字的老師是誰？',['蘇利文老師','南丁格爾','居禮夫人','愛迪生'],0,'蘇利文老師在海倫的手心拼寫字母，讓她明白每樣東西都有名字。'],
+ ['z-person','讀人物傳記時，最應該注意什麼？',['人物的特質和他帶來的影響','人物穿什麼衣服','文章有幾個字','作者住在哪裡'],0,'讀傳記要找出重要事蹟、人物特質，以及對別人或社會的影響。'],
+ ['z-xing','今天是個晴（　）的好天氣。',['朗','郎','浪','狼'],0,'「朗」有月字旁，和光亮有關，如晴朗；「郎」指年輕男子，如新郎。'],
+ ['z-duoyin','下面哪個「磨」要讀作ㄇㄛˋ？',['石磨','磨練','折磨','磨刀'],0,'名詞「石磨、磨坊」讀ㄇㄛˋ；動作「磨練、磨刀」讀ㄇㄛˊ。'],
+ ['z-bushou','「毯」和「毫」兩個字的部首是什麼？',['毛','火','言','亠'],0,'「毯」「毫」都和毛有關，部首是「毛」。'],
+ ['z-bushou','「階、楷、偕」三個字有哪一個相同的部件？',['皆','比','白','木'],0,'它們都有「皆」部件，用相同部件可以一次記住一群字。'],
+ ['z-ci','「千變萬化」的意思和哪個詞最接近？',['變化多端','一成不變','千辛萬苦','萬無一失'],0,'千變萬化形容變化很多，近義詞是「變化多端」，反義詞是「一成不變」。'],
+ ['z-ci','「他第一次上臺，緊張得不知所措。」「不知所措」是什麼意思？',['不知道該怎麼辦','知道所有答案','非常開心','非常生氣'],0,'「措」是處理、安排，「不知所措」就是慌張得不知道該怎麼做。'],
+ ['z-read','把意思相關的幾個自然段合在一起，叫做什麼？',['意義段','自然段','標點符號','標題'],0,'自然段是原本分好的段落；意思相關的自然段合起來就是「意義段」，可以幫助摘大意。']]},
+{id:'zh3',name:'放眼看世界',goal:'認識嘆詞、轉折句與假設句，學會讀說明文和非連續文本，能分項介紹一個地方的特色。',
+ lessons:['第 7 課　美味的一堂課','第 8 課　建築界的長頸鹿','第 9 課　請到我的家鄉來','學習地圖三　非連續文本'],
+ map:[['課文',['美味的一堂課：感官摹寫','建築界的長頸鹿：說明文','請到我的家鄉來：介紹各地文化']],['識字',['酉部：醋、醬、酸','「是」部件：提、題、堤']],['語詞與句子',['嘆詞：哇、唉、咦','沒想到……竟然……（轉折）','如果……就……（假設）','反義詞']],['閱讀寫作',['說明文：總分結構','非連續文本：表格、地圖、時刻表','分項列舉介紹特色']]],
+ qs:[
+ ['z-bushou','「醋、醬、酸」三個字的部首是什麼？',['酉','西','日','皿'],0,'「酉」部的字常和酒或發酵的食物有關，像醋、醬、酒。'],
+ ['z-ci','下面哪一個是「嘆詞」？',['唉','跑','美麗','桌子'],0,'嘆詞用來表達驚訝、感嘆等情緒，例如：哇、唉、啊、咦。'],
+ ['z-ju','「沒想到……竟然……」這種句子，通常表示什麼？',['結果出乎意料','事情的先後順序','兩件事同時發生','做事的目的'],0,'「沒想到……竟然……」是轉折句，表示結果和原本想的不一樣。'],
+ ['z-ju','下面哪一句是「假設句」？',['如果明天下雨，運動會就延期。','因為下雨，所以運動會延期。','雖然下雨，但是運動會照常舉行。','他一邊唱歌，一邊跳舞。'],0,'假設句常用「如果……就……」，說明在某個條件下會發生的事。'],
+ ['z-bushou','「提、題、堤」三個字有哪一個相同的部件？',['是','手','頁','土'],0,'它們都有「是」部件，都讀ㄊㄧˊ，再用部首分辨意思：提（手）、題（頁）、堤（土）。'],
+ ['z-ci','「熱鬧」的反義詞是哪一個？',['冷清','熱情','吵鬧','興奮'],0,'反義詞是意思相反的詞：熱鬧↔冷清。'],
+ ['z-text','下面哪一個屬於「非連續文本」？',['公車時刻表','一篇童話故事','一首童詩','一封信'],0,'非連續文本用表格、圖表、地圖、時刻表等呈現資訊，不是一段一段的文章。'],
+ ['z-text','說明文最主要的目的是什麼？',['清楚介紹知識或事物','說一個好笑的故事','抒發心情','寫押韻的詩'],0,'說明文要客觀、清楚的介紹事物，常用舉例、列數字、做比較等方法。'],
+ ['z-text','文章先用一段話總括介紹，後面幾段再分別詳細說明，這是什麼結構？',['總分結構','倒敘結構','對話結構','押韻結構'],0,'總分結構：先總說，再分說；最後再總結一次就是「總分總」。'],
+ ['z-text','介紹一個國家時，分成「飲食、服飾、名勝」幾段來寫，這是什麼寫法？',['分項列舉','倒敘','擬人','誇飾'],0,'把要介紹的內容分成幾個項目一項一項說明，讀者更容易看懂。']]},
+{id:'zh4',name:'魔法變變變',goal:'認識奇幻故事的特色，學會目的複句、選擇複句、摹聲詞和擴寫技巧。',
+ lessons:['第 10 課　奇幻旋律','第 11 課　兔子先生等等我','第 12 課　老鞋匠和小精靈','學習地圖四　擴寫與書法名家','閱讀階梯二　國王的噴泉'],
+ map:[['課文',['奇幻旋律：押韻詩歌','兔子先生等等我','老鞋匠和小精靈：奇幻故事']],['識字',['「扁」部件：編、篇、偏、遍','皿部：盆、盤、盛','形近字：買／賣、鐘／鍾']],['語詞與句子',['山水四字詞','摹聲詞：滴答、嘖嘖','刪節號……','為了……（目的）','不是……就是……（選擇）']],['寫作與閱讀',['擴寫：加入細節','書聖王羲之','預測、推論、人物分析']]],
+ qs:[
+ ['z-bushou','「編、篇、偏、遍」四個字都有哪一個部件？',['扁','戶','冊','竹'],0,'這些字都有「扁」部件，再看部首分辨：編（糸）、篇（竹）、偏（人）、遍（辵）。'],
+ ['z-ci','形容風景優美、山水清秀，應該用哪一個詞？',['山明水秀','跋山涉水','山窮水盡','翻山越嶺'],0,'山明水秀形容景色美；跋山涉水、翻山越嶺形容旅途辛苦；山窮水盡比喻走投無路。'],
+ ['z-bushou','「盆、盤、盛」三個字的部首是什麼？',['皿','分','般','成'],0,'「皿」是裝東西的器具，皿部的字多和容器有關。'],
+ ['z-ju','「我……我……我不是故意的……」句子裡的「……」表示什麼？',['說話斷斷續續、吞吞吐吐','聲音很大','在問問題','列出項目'],0,'刪節號可以表示省略，也可以表示說話斷斷續續、猶豫或緊張。'],
+ ['z-ju','「為了準時上學，他每天早早起床。」這是什麼句子？',['目的複句','假設複句','轉折複句','選擇複句'],0,'目的複句常用「為了……」，說明做一件事的目的。'],
+ ['z-xing','「我要去商店（　）文具。」括號應填哪一個字？',['買','賣','實','貝'],0,'「買」是付錢得到東西；「賣」是把東西交給別人換錢，字的上面多了「士」。'],
+ ['z-xing','教室牆上掛著一個時（　）。',['鐘','鍾','種','終'],0,'「鐘」指時鐘、鐘聲；「鍾」常用在姓氏或「一見鍾情」。'],
+ ['z-ci','「滴答、滴答」這類模仿聲音的詞叫做什麼？',['摹聲詞','嘆詞','量詞','代名詞'],0,'摹聲詞是模仿聲音的詞，例如：滴答、轟隆、嘖嘖、汪汪。'],
+ ['z-ju','「週末我不是去打球，就是去游泳。」這是什麼句子？',['選擇複句','因果複句','假設複句','並列複句'],0,'「不是……就是……」表示兩種情況中一定有一種，是選擇複句。'],
+ ['z-write','把「小狗跑過來。」寫成「一隻毛茸茸的小白狗搖著尾巴，開心的朝我跑過來。」這是什麼技巧？',['擴寫','縮寫','改寫','倒敘'],0,'擴寫就是加入外形、動作、心情等細節，把短句變豐富。'],
+ ['z-person','被後人尊稱為「書聖」的古代書法家是誰？',['王羲之','李白','孔子','岳飛'],0,'王羲之是東晉書法家，代表作〈蘭亭集序〉，後人尊稱「書聖」。']]}
+]},
+ma:{name:'數學',realm:'算術要塞',ver:'康軒版・四上',crest:'數',units:[
+{id:'ma1',name:'一億以內的數',goal:'會讀寫一億以內的數，認識位名與位值，能比大小並做大數加減。',lessons:['十萬以內的數','一億以內的數','數的大小比較','大數的加減'],
+ map:[['位名',['個、十、百、千','萬、十萬、百萬、千萬','10 個一千萬＝一億']],['讀寫',['以「萬」為分界','萬以下寫滿 4 位，不足補 0']],['比大小',['位數多的比較大','位數相同從最高位比']],['加減',['位數對齊','進位與借位']]],
+ qs:[['m-place','一億以內的數，由右往左數第 8 位是哪一位？',['千萬位','百萬位','億位','十萬位'],0,'個、十、百、千、萬、十萬、百萬、千萬，第 8 位是千萬位。'],['m-place','10 個一百萬是多少？',['一千萬','一百萬','十萬','一億'],0,'10 個一百萬＝一千萬；10 個一千萬＝一億。']]},
+{id:'ma2',name:'整數的乘法',goal:'能用直式計算四位數乘一位數、二位數乘二位數、三四位數乘二位數，並解決應用題。',lessons:['四位數×一位數','一、二位數×二位數','三、四位數×二位數'],
+ map:[['直式',['從個位乘起，記得進位','乘十位數字時從十位對齊寫']],['類型',['四位數×一位數','二位數×二位數','三、四位數×二位數']],['應用',['每份×份數＝全部','算完用估算檢查']]],
+ qs:[['m-mul','計算 325×46 時，十位的 4 代表多少？',['40','4','400','46'],0,'十位的 4 代表 4 個十＝40，所以乘出來的結果要從十位開始寫。']]},
+{id:'ma3',name:'角度',goal:'會用量角器量角和畫角，認識銳角、直角、鈍角、平角、周角與旋轉角。',lessons:['量角器的認識與報讀','測量角的大小和畫角','旋轉角','角的合成與分解'],
+ map:[['量角器',['中心點對準角的頂點','0 度線對準一邊','內外圈不要看錯']],['角的種類',['銳角＜90 度','直角＝90 度','鈍角：90～180 度','平角 180 度、周角 360 度']],['旋轉角',['順時針、逆時針','分針走一個數字＝30 度']],['合成分解',['兩角合起來相加','用 180 或 360 減']]],
+ qs:[['m-angle-type','直角是幾度？',['90 度','180 度','45 度','360 度'],0,'直角＝90 度，平角＝180 度，周角＝360 度。'],['m-angle-type','比直角小的角叫什麼？',['銳角','鈍角','平角','周角'],0,'銳角小於 90 度；鈍角介於 90 度和 180 度之間。'],['m-rotate','分針從 12 走到 6，旋轉了多少度？',['180 度','90 度','360 度','60 度'],0,'走半圈就是平角，180 度。']]},
+{id:'ma4',name:'整數的除法',goal:'能用直式計算四位數除以一位數、二三四位數除以二位數，會驗算並解決應用題。',lessons:['四位數÷一位數','二位數÷二位數','三位數÷二位數','四位數÷二位數'],
+ map:[['直式',['從最高位除起','商寫在對齊的位置']],['餘數',['餘數一定比除數小']],['驗算',['除數×商＋餘數＝被除數']],['應用',['最多幾包→捨去剩下的','至少幾輛→剩下的再加 1']]],
+ qs:[['m-div','除法的驗算方法是什麼？',['除數×商＋餘數＝被除數','被除數×商＝除數','商＋餘數＝被除數','除數－商＝餘數'],0,'把商乘回除數再加上餘數，應該要等於被除數。'],['m-div','除法的餘數一定要怎樣？',['比除數小','比除數大','等於除數','比商大'],0,'餘數如果比除數大或相等，表示還能再分，商要再加大。']]},
+{id:'ma5',name:'公里',goal:'認識長度單位公里，能做公里、公尺、公分的換算和加減。',lessons:['認識公里','公里、公尺和公分的換算','公里和公尺的加減計算'],
+ map:[['單位',['1 公里＝1000 公尺','1 公尺＝100 公分']],['換算',['公里→公尺：×1000','每 1000 公尺是 1 公里']],['計算',['換成相同單位再算','公尺滿 1000 進 1 公里']]],
+ qs:[['m-km','1 公里等於多少公尺？',['1000 公尺','100 公尺','10000 公尺','10 公尺'],0,'1 公里＝1000 公尺。'],['m-km','下面哪一個距離最適合用「公里」當單位？',['臺北到臺中的距離','鉛筆的長度','教室的寬度','課本的厚度'],0,'很長的距離用公里，像城市和城市之間。']]},
+{id:'ma6',name:'三角形',goal:'能依邊和角替三角形分類，會畫三角形，並認識全等圖形。',lessons:['三角形','以邊分類三角形','以角分類三角形','繪製三角形','全等圖形與全等三角形'],
+ map:[['構成',['3 個頂點、3 條邊、3 個角']],['以邊分',['正三角形：三邊等長、三個角都 60 度','等腰三角形：兩邊等長、兩底角相等']],['以角分',['銳角三角形','直角三角形','鈍角三角形']],['全等',['形狀大小都一樣','對應邊、對應角相等','平移、旋轉、翻轉可疊合']]],
+ qs:[['m-tri-side','正三角形的每一個角是幾度？',['60 度','90 度','45 度','30 度'],0,'正三角形三邊等長，三個角也一樣大，都是 60 度。'],['m-tri-angle','有一個角是直角的三角形叫做什麼？',['直角三角形','銳角三角形','鈍角三角形','正三角形'],0,'有一個直角→直角三角形；有一個鈍角→鈍角三角形。'],['m-congruent','兩個圖形全等，表示什麼？',['形狀和大小完全一樣','只有形狀一樣','只有顏色一樣','面積不一樣'],0,'全等圖形可以完全疊合，對應邊、對應角都相等。'],['m-tri-side','等腰三角形有幾條邊一樣長？',['至少兩條','只有一條','一條都沒有','四條'],0,'等腰三角形有兩條邊等長，這兩邊叫做「腰」。']]},
+{id:'ma7',name:'小數',goal:'認識二位小數和百分位，能用小數表示公尺與公分，會比大小和做加減。',lessons:['認識二位小數','長度與小數的大小比較','小數的加減'],
+ map:[['位名',['個位．十分位 百分位','0.01 讀作零點零一']],['換算',['1 公分＝0.01 公尺','3 公尺 5 公分＝3.05 公尺']],['比大小',['先比整數，再比十分位、百分位']],['加減',['小數點對齊再計算']]],
+ qs:[['m-dec','0.01 讀作什麼？',['零點零一','零點一','一百','十分之一'],0,'0.01 讀作零點零一，是百分之一。'],['m-dec','1 公分是多少公尺？',['0.01 公尺','0.1 公尺','10 公尺','100 公尺'],0,'1 公尺＝100 公分，所以 1 公分＝0.01 公尺。']]},
+{id:'ma8',name:'整數四則計算',goal:'能用併式記錄兩步驟問題，知道括號先算、先乘除後加減的規則。',lessons:['加減兩步驟的併式','乘除兩步驟的併式','加減與乘的併式','加減與除的併式','四則混合'],
+ map:[['規則',['括號先算','先乘除後加減','同一級由左往右']],['併式',['兩步驟寫成一個算式','逐次減項計算']],['應用',['找錢：付的錢－花的錢','平分：（全部）÷人數']]],
+ qs:[['m-order','四則混合計算的順序規則是什麼？',['括號先算，再先乘除後加減','一律從右往左算','先加減後乘除','隨便算都可以'],0,'括號先算 → 先乘除後加減 → 同一級由左往右。']]},
+{id:'ma9',name:'分數',goal:'認識真分數、假分數、帶分數，會互換、比大小，並做同分母加減與整數倍。',lessons:['認識真分數、假分數和帶分數','假分數和帶分數的互換與比大小','同分母分數的加減','分數的整數倍'],
+ map:[['分數種類',['真分數：分子＜分母','假分數：分子≥分母','帶分數：整數＋真分數']],['互換',['假→帶：分子÷分母','帶→假：整數×分母＋分子']],['計算',['同分母：分母不變，分子相加減','整數倍：分子×整數']]],
+ qs:[['m-frac','分子比分母小的分數叫做什麼？',['真分數','假分數','帶分數','整數'],0,'分子＜分母是真分數；分子≥分母是假分數。'],['m-frac','分子等於或大於分母的分數叫做什麼？',['假分數','真分數','帶分數','小數'],0,'假分數可以化成帶分數或整數。']]},
+{id:'ma10',name:'統計圖',goal:'會報讀生活中的統計圖，能報讀與繪製長條圖、報讀折線圖。',lessons:['報讀生活中的統計圖','報讀與繪製長條圖','報讀折線圖','報讀複雜的統計圖'],
+ map:[['長條圖',['比較數量多少','先看標題、單位、刻度']],['折線圖',['看變化趨勢','線往上＝增加']],['報讀',['找最大、最小','算相差、合計']]],
+ qs:[['m-graph','想表示一週氣溫的變化情形，最適合用什麼圖？',['折線圖','長條圖','照片','地圖'],0,'折線圖適合看數量隨時間的變化。'],['m-graph','比較各班喜歡的水果人數多寡，最適合用什麼圖？',['長條圖','折線圖','地圖','時刻表'],0,'長條圖適合比較不同項目的數量。']]}
+]},
+na:{name:'自然',realm:'元素峽谷',ver:'康軒版・四上',crest:'自',units:[
+{id:'na1',name:'地表的靜與動',goal:'知道地表物質的特性、流水如何改變地表，以及怎樣做好地震防災。',lessons:['活動一　地表物質有什麼','活動二　地表環境會變動嗎','活動三　怎樣做好地震防災'],
+ map:[['地表物質',['礫石＞沙＞土壤（顆粒大小）','土壤能保水、有養分']],['流水作用',['侵蝕、搬運、堆積','顆粒越小搬得越遠']],['人與環境',['過度開發→土石流','水土保持、種樹']],['地震防災',['趴下、掩護、穩住','避難包、防災演練']]],
+ qs:[
+ ['n-soil','礫石、沙、土壤三種地表物質，哪一種的顆粒最小？',['土壤','沙','礫石','一樣大'],0,'顆粒大小：礫石＞沙＞土壤。土壤摸起來最細滑。'],
+ ['n-soil','地表環境由生物和非生物組成，下面哪一個是「非生物」？',['岩石','小草','蚯蚓','麻雀'],0,'岩石、沙、土壤、水、空氣都是非生物。'],
+ ['n-water','用水流沖刷土堆，哪一種物質會被搬得最遠？',['土壤（顆粒最小）','礫石（顆粒最大）','沙','都一樣遠'],0,'顆粒越小越輕，被流水搬得越遠。'],
+ ['n-water','流水把山上的砂石沖到下游、在河口堆起來，這是流水的哪兩種作用？',['搬運和堆積','蒸發和凝結','振動和傳播','發電和導電'],0,'流水的作用：侵蝕（刮下來）、搬運（帶走）、堆積（堆起來）。'],
+ ['n-protect','下面哪一種做法可以減少土石流發生？',['在山坡上種樹、做好水土保持','大量砍伐山林','在河道旁亂倒廢土','把山坡挖平蓋房子'],0,'植物的根能抓住土壤，水土保持可以降低大雨時土石崩落的危險。'],
+ ['n-quake','地震發生時，在教室裡應該怎麼做？',['趴下、掩護、穩住','馬上衝出教室','站到窗戶旁看','搭電梯下樓'],0,'地震時先趴下、掩護、穩住，保護頭頸，等搖晃停止再依指示疏散。'],
+ ['n-quake','強烈地震可能造成哪一種地表變化？',['山崩、地面裂開','月亮變圓','河水變甜','天空變色'],0,'地震和流水一樣會改變地表，強烈地震可能造成山崩、地裂。'],
+ ['n-quake','準備「緊急避難包」時，下面哪一樣最需要放進去？',['飲用水和手電筒','電動玩具','玻璃花瓶','整箱漫畫'],0,'避難包要放水、乾糧、手電筒、急救用品、哨子等保命物品。'],
+ ['n-soil','種植物時，哪一種地表物質最能保留水分、提供養分？',['土壤','礫石','大石塊','水泥'],0,'土壤顆粒小、含有養分，最適合植物生長。']]},
+{id:'na2',name:'水生生物與環境',goal:'認識四種水生植物和魚的構造，了解生物如何適應水中環境，並懂得愛護水域。',lessons:['活動一　生物生存的環境都相同嗎','活動二　水生生物如何適應環境','活動三　如何愛護環境'],
+ map:[['生存環境',['水域環境、陸域環境','不同環境有不同生物']],['水生植物',['漂浮性：布袋蓮、大萍','沉水性：水蘊草','浮葉性：睡蓮','挺水性：荷花']],['水生動物',['魚：頭部、軀幹、鰭','用鰓呼吸','擺動鰭前進、轉向']],['愛護環境',['不亂丟垃圾','不放生外來種']]],
+ qs:[
+ ['n-plant','布袋蓮能浮在水面上，主要靠什麼構造？',['膨大的葉柄裡有很多空氣','根長得很深','莖非常硬','葉子很小'],0,'布袋蓮是漂浮性植物，葉柄膨大像氣囊，裡面有空氣，幫助它浮起來。'],
+ ['n-plant','整株都長在水面下、葉子細細長長的是哪一類水生植物？',['沉水性（如水蘊草）','挺水性（如荷花）','漂浮性（如大萍）','浮葉性（如睡蓮）'],0,'沉水性植物整株在水中，細長的葉子可以減少水流的阻力。'],
+ ['n-plant','睡蓮的根長在水底泥土中，葉子平貼在水面，它屬於哪一類？',['浮葉性','沉水性','挺水性','漂浮性'],0,'浮葉性植物根在泥中，有長長的葉柄，讓葉子浮在水面。'],
+ ['n-plant','荷花的莖和葉高高挺出水面，屬於哪一類水生植物？',['挺水性','沉水性','漂浮性','浮葉性'],0,'挺水性植物根在泥中，莖葉挺出水面。'],
+ ['n-fish','魚在水中靠什麼呼吸？',['鰓','肺','皮膚','鰭'],0,'魚的口和鰓蓋一開一合，讓水流過鰓，吸取水中的氧氣。'],
+ ['n-fish','魚靠什麼構造在水中前進和控制方向？',['鰭','鱗片','鰓蓋','眼睛'],0,'魚擺動尾鰭前進，用其他鰭保持平衡、控制方向。'],
+ ['n-fish','魚的身體外形主要分成哪三部分？',['頭部、軀幹、鰭','頭、胸、腹','根、莖、葉','頭、手、腳'],0,'魚的外形分為頭部、軀幹和鰭。頭、胸、腹是昆蟲的身體分法。'],
+ ['n-env','下列哪種做法能保護水域環境？',['不亂丟垃圾、不隨意放生外來魚種','把剩菜倒進河裡','在河邊烤肉不收拾','撈小魚回家玩'],0,'亂丟垃圾、放生外來種都會破壞水中生態。'],
+ ['n-env','住海邊的人常吃魚蝦，住山區的人常吃山菜、竹筍，這說明了什麼？',['不同環境影響人類食物的種類','大家都愛吃一樣的東西','食物都來自超市','食物和環境沒有關係'],0,'環境提供不同的資源，影響人們的食物來源與飲食習慣。'],
+ ['n-plant','比較水域環境和陸域環境，哪個說法正確？',['不同的環境有不同的生物生存','所有生物都住在同一種環境','水裡沒有植物','陸地上沒有動物'],0,'生物會適應環境，所以水域、陸域各有不同的生物。']]},
+{id:'na3',name:'有趣的聲光現象',goal:'知道聲音如何產生與傳播、光的直線前進與反射，並認識聲光在生活中的應用。',lessons:['活動一　聲音如何產生和傳播','活動二　光有什麼特性','活動三　如何應用聲與光'],
+ map:[['聲音',['振動產生聲音','振動越大，聲音越大','固體、液體、氣體都能傳聲']],['光',['光直線前進','光被擋住形成影子','光反射進眼睛才看得見']],['反射',['鏡子角度改變反射方向','反射鏡、潛望鏡']],['應用',['警示、指示、裝飾、娛樂']]],
+ qs:[
+ ['n-sound','聲音是怎麼產生的？',['物體振動','物體變冷','物體變色','物體靜止不動'],0,'物體振動會產生聲音，例如撥動橡皮筋、敲鼓。'],
+ ['n-sound','用力撥和輕輕撥橡皮筋，哪一種聲音比較大？',['用力撥，振動較大，聲音較大','輕輕撥比較大','一樣大','都沒有聲音'],0,'振動越大，聲音越大。'],
+ ['n-sound','把耳朵貼在桌面，可以聽到桌子另一頭的敲打聲，說明了什麼？',['聲音可以在固體中傳播','聲音只能在空氣中傳播','桌子會發光','聲音不能傳播'],0,'聲音可以透過固體、液體、氣體傳播。'],
+ ['n-light','我們能看見一本書，是因為什麼？',['光照到書上，再反射進入眼睛','書本自己會發光','眼睛會發光','書本會發出聲音'],0,'物體自己發光，或光照在物體上反射進入眼睛，我們才看得見。'],
+ ['n-light','手電筒的光要穿過三張打了洞的卡片，洞要怎麼排才看得到光？',['三個洞排成一直線','三個洞錯開','卡片不要打洞','洞越大越好，隨便排'],0,'光是直線前進的，所以洞要排成一直線。'],
+ ['n-light','光被不透光的物體擋住時，影子會出現在哪裡？',['物體背對光的另一側','物體面對光的那一側','光源旁邊','不會有影子'],0,'光直線前進，被擋住後另一側照不到光，就形成影子。'],
+ ['n-reflect','改變鏡子的角度，反射光的方向會怎樣？',['跟著改變','不會改變','光會消失','光會變顏色'],0,'光照到鏡面會反射，鏡子角度改變，反射方向也跟著變。'],
+ ['n-reflect','山路轉彎處的反射鏡，是利用光的什麼特性？',['光的反射','聲音的振動','電的流動','水的流動'],0,'反射鏡利用光的反射，讓駕駛看到轉角另一邊的來車。'],
+ ['n-use','救護車同時響警笛、閃紅燈，主要目的是什麼？',['利用聲音和光發出警示','裝飾好看','省電','測量速度'],0,'生活中常用聲音和光來警示、指示、裝飾或娛樂。'],
+ ['n-sound','下面哪一個玩具是利用固體來傳聲？',['紙杯傳聲筒','萬花筒','手電筒','風車'],0,'傳聲筒用拉緊的線連接兩個紙杯，聲音沿著線（固體）傳過去。']]},
+{id:'na4',name:'好玩的電路',goal:'能連接通路讓燈泡發亮，分辨導體，知道串聯與並聯的差別，並做到安全用電。',lessons:['活動一　如何讓燈泡發亮','活動二　電路有哪些連接方式','活動三　用電觀念知多少'],
+ map:[['電路',['電池、電線、燈泡','通路亮、斷路不亮','開關控制通斷']],['導體',['金屬可以導電','塑膠、木頭、橡皮不導電']],['連接方式',['電池串聯：燈較亮','電池並聯：較耐用','燈泡串聯：拿掉一個全熄','燈泡並聯：拿掉一個其他仍亮']],['用電安全',['濕手不碰電','延長線不超載','伏打發明電池']]],
+ qs:[
+ ['n-circuit','電池、電線、燈泡接成一個完整的迴路，燈泡會亮，這叫做什麼？',['通路','斷路','短路','電路圖'],0,'電流能從電池一端出發、經過燈泡、回到另一端，就是通路。'],
+ ['n-circuit','電路中有一處電線沒接好，燈泡不亮，這叫做什麼？',['斷路','通路','並聯','串聯'],0,'電路中斷、電流無法流通就是斷路。'],
+ ['n-conductor','下面哪一個物品可以導電？',['鐵製迴紋針','橡皮擦','塑膠尺','木頭筷子'],0,'金屬通常容易導電；塑膠、橡皮、木頭不容易導電。'],
+ ['n-conductor','電線外面包一層塑膠皮，目的是什麼？',['塑膠不導電，可以防止觸電','讓電流跑得更快','讓電線變亮','讓電線變重'],0,'塑膠不容易導電，包在外面可以保護我們。'],
+ ['n-series','兩顆電池「串聯」接一個燈泡，和只用一顆電池相比，燈泡會怎樣？',['比較亮','比較暗','一樣亮','不會亮'],0,'電池串聯燈泡較亮；電池並聯亮度和一顆差不多，但可以亮比較久。'],
+ ['n-series','兩個燈泡「串聯」時，拿掉其中一個，另一個會怎樣？',['也會熄滅','變得更亮','亮度不變','開始閃爍'],0,'燈泡串聯只有一條路，拿掉一個就變成斷路，另一個也熄了。'],
+ ['n-series','家裡關掉一盞燈，其他燈仍然亮著，家中電燈大多是怎麼連接的？',['並聯','串聯','斷路','沒有連接'],0,'燈泡並聯時各有各的路，拿掉一個，其他的仍然會亮。'],
+ ['n-safety','下面哪一個是安全用電的好習慣？',['手擦乾再拔插頭','用濕手摸插座','同一條延長線插滿電器','拉電線把插頭扯出來'],0,'濕手容易觸電；延長線不可插太多電器；拔插頭要握住插頭本體。'],
+ ['n-safety','做出最早電池「伏打電池」的科學家是誰？',['伏打','牛頓','愛迪生','伽利略'],0,'伏打用鋅片、銅片和浸過鹽水的布疊起來，做出了最早的電池。'],
+ ['n-circuit','手電筒的開關是怎麼控制燈泡亮或不亮？',['移動金屬片，讓電路接通或斷開','改變電池的顏色','加水到電池裡','把燈泡轉鬆'],0,'開關裡的金屬片接觸時形成通路，分開時就是斷路。']]}
+]},
+so:{name:'社會',realm:'王國城鎮',ver:'翰林版・四上',crest:'社',units:[
+{id:'so1',name:'家鄉的地圖與運用',goal:'認識地圖四要素與方位，會用比例尺換算距離，並依需要選擇合適的地圖。',lessons:['第 1 課　閱讀生活中的地圖','第 2 課　善用地圖好生活'],
+ map:[['地圖四要素',['圖名','圖例','方向標（指北）','比例尺']],['方位',['上北、下南、左西、右東']],['比例尺',['1：10000→地圖 1 公分＝實際 100 公尺']],['地圖種類',['行政區域圖','交通路線圖','電子地圖：縮放、導航']]],
+ qs:[
+ ['s-map4','地圖的四要素是哪四個？',['圖名、圖例、方向標、比例尺','顏色、字體、紙張、邊框','山、河、城市、道路','經度、緯度、海拔、溫度'],0,'看地圖先找四要素：圖名說主題、圖例解釋符號、方向標指方位、比例尺換算距離。'],
+ ['s-map4','地圖上用符號代表學校、醫院、車站，要看哪一個要素才知道符號的意思？',['圖例','圖名','比例尺','方向標'],0,'圖例就是符號的說明表。'],
+ ['s-dir','地圖上如果沒有方向標，一般怎麼判斷方位？',['上北、下南、左西、右東','上南、下北、左東、右西','上東、下西、左北、右南','看太陽位置'],0,'沒有方向標時，通常是上北下南、左西右東。'],
+ ['s-dir','方向標的箭頭通常指向哪一個方位？',['北方','南方','東方','西方'],0,'方向標箭頭（常標 N）指向北方，知道北就能推出其他方位。'],
+ ['s-scale','比例尺 1：10000，地圖上 1 公分代表實際多少距離？',['100 公尺','10 公尺','1 公里','10000 公尺'],0,'實際距離是地圖的 10000 倍：10000 公分＝100 公尺。'],
+ ['s-scale','用同樣大小的紙，一張畫整個臺灣、一張只畫一個社區，哪個說法正確？',['臺灣地圖範圍大，但內容比較簡略','社區地圖的範圍比較大','兩張一樣詳細','無法比較'],0,'範圍越大，能畫出的細節越少；範圍小的地圖可以畫得很詳細。'],
+ ['s-maptype','想知道搭捷運從板橋到臺北車站要坐哪一條線，應該看哪一種地圖？',['交通路線圖','行政區域圖','地形圖','雨量分布圖'],0,'交通路線圖畫出路線與站名，方便規劃搭乘。'],
+ ['s-maptype','電子地圖和紙本地圖相比，有什麼優點？',['可以放大縮小、搜尋地點、即時導航','不需要用電','永遠不會出錯','只能看一個城市'],0,'電子地圖可縮放、查詢、導航，但需要電和網路，也要注意資訊是否正確。'],
+ ['s-maptype','想知道新北市有哪些區、各區的界線在哪裡，應該看哪一種地圖？',['行政區域圖','捷運路線圖','公車時刻表','雨量分布圖'],0,'行政區域圖畫出縣市、鄉鎮市區的範圍和界線。']]},
+{id:'so2',name:'家鄉的地形與氣候',goal:'認識平原、盆地、台地、丘陵、山地，知道臺灣氣候特色，以及地形氣候如何影響居民生活。',lessons:['第 1 課　高低起伏的地形','第 2 課　千變萬化的氣候'],
+ map:[['地形',['平原：低平','盆地：四周高中間低','台地：頂平四周陡','丘陵、山地']],['氣候',['夏秋颱風','五六月梅雨','冬季東北季風']],['土地利用',['山坡種茶','平原種稻、發展城市','開發也會改變環境']]],
+ qs:[
+ ['s-land','地勢低平、交通方便，最適合發展城市和農業的是哪一種地形？',['平原','山地','丘陵','高山'],0,'平原地勢平坦，容易耕作和建設，人口通常較多。'],
+ ['s-land','四周高、中間低的地形叫做什麼？',['盆地','台地','平原','半島'],0,'盆地四周被山圍繞、中間低平，例如臺北盆地。'],
+ ['s-land','海拔高、坡度陡的地形是哪一種？',['山地','平原','盆地','沙洲'],0,'臺灣山地面積廣，中央山脈縱貫南北。'],
+ ['s-land','頂部平坦、四周是陡坡的地形叫做什麼？',['台地','盆地','平原','峽谷'],0,'台地像一張桌子，頂部平坦，例如桃園台地。'],
+ ['s-landuse','山坡地氣候涼爽、排水好，居民常拿來做什麼？',['種植茶樹','曬鹽','養殖虱目魚','種水稻'],0,'地形會影響土地利用：山坡種茶、平原種稻、海邊曬鹽或養殖。'],
+ ['s-climate','臺灣夏、秋季常遇到帶來強風豪雨的天氣是什麼？',['颱風','下雪','沙塵暴','冰雹季'],0,'颱風多發生在夏、秋季，要做好防颱準備。'],
+ ['s-climate','冬天臺灣北部常常陰雨綿綿，主要是受到什麼影響？',['東北季風','颱風','梅雨','熱浪'],0,'冬季東北季風從海上帶來水氣，讓北部和東北部多雨。'],
+ ['s-climate','每年五、六月，臺灣常連續下好幾天雨，這是什麼季節？',['梅雨季','颱風季','乾季','雪季'],0,'梅雨能補充水庫的水，但下太多也可能造成水災。'],
+ ['s-landuse','下面哪一項說明「經濟發展也會改變自然環境」？',['大量開發山坡地，造成土石流','颱風帶來雨水','季節變化','月亮圓缺'],0,'人類的開發會改變自然環境，要兼顧發展和環境保護。']]},
+{id:'so3',name:'家鄉的人口與生活',goal:'了解人口組成與變化，探究少子化和高齡化的影響，學會關懷長輩。',lessons:['第 1 課　家鄉的人口組成','第 2 課　人口變化與發展'],
+ map:[['人口組成',['年齡、性別、族群、職業']],['人口變化',['少子化：出生人數變少','高齡化：65 歲以上比例增加']],['影響與因應',['學校減班','長照、樂齡中心']],['人口遷移',['工作機會吸引人口','交通、教育也有影響']]],
+ qs:[
+ ['s-pop','「人口組成」可以從哪些方面來觀察？',['年齡、性別、族群','房子顏色','天氣','交通工具'],0,'人口組成包含年齡、性別、族群、職業等，可以了解一個地方的人口特色。'],
+ ['s-aging','每年出生的嬰兒越來越少，叫做什麼現象？',['少子化','高齡化','都市化','全球化'],0,'少子化可能造成學校減班、未來工作人口不足。'],
+ ['s-aging','65 歲以上老年人口的比例越來越高，叫做什麼現象？',['高齡化','少子化','工業化','現代化'],0,'高齡社會需要更多長期照顧、無障礙設施和關懷長輩的服務。'],
+ ['s-aging','少子化可能帶來什麼影響？',['學校學生變少、班級減少','老人變少','房子變多','空氣變好'],0,'出生人數減少，學生也變少，部分學校可能減班或合併。'],
+ ['s-aging','下面哪一項是因應高齡社會的做法？',['設立樂齡學習中心與長照服務','關閉醫院','取消公車博愛座','減少人行道'],0,'政府和民間設立長照據點、樂齡中心，讓長輩活得健康、有尊嚴。'],
+ ['s-migrate','很多年輕人離開鄉村到城市工作，主要原因是什麼？',['城市的工作機會較多','城市空氣比較好','鄉村沒有學校','城市比較安靜'],0,'工作機會、交通、教育等因素會吸引人口移入。'],
+ ['s-pop','和家中長輩相處時，哪一種態度最合適？',['耐心傾聽、尊重長輩','嫌長輩動作慢','不跟長輩說話','取笑長輩'],0,'尊重不同年齡的人、避免偏見，是社會的重要價值。'],
+ ['s-migrate','一個地方的人口數量會受到哪些因素影響？',['自然環境和人文環境（工作、交通）','只有天氣','只有運氣','月亮的圓缺'],0,'地形、氣候等自然環境，以及工作、交通、教育等人文環境，都會影響人口。']]},
+{id:'so4',name:'家鄉的多元文化',goal:'欣賞不同族群的飲食、服飾、語言與命名文化，學會尊重差異。',lessons:['第 1 課　家鄉的飲食文化','第 2 課　家鄉的多元服飾','第 3 課　家鄉的多元語言與命名'],
+ map:[['飲食',['客家：擂茶、粄條','原住民族：小米、竹筒飯','新住民：各國料理']],['服飾',['祭典穿傳統服飾','傳承與創新']],['語言與命名',['泰雅族：親子連名','達悟族：親從子名','尊重不同語言']],['文化交流',['衝突、合作、創新']]],
+ qs:[
+ ['s-food','「擂茶」、「客家小炒」是哪一個族群的代表飲食？',['客家人','達悟族','荷蘭人','日本人'],0,'客家飲食常見擂茶、粄條、客家小炒、梅干扣肉。'],
+ ['s-food','「竹筒飯」、「小米」常見於哪一個族群的飲食文化？',['原住民族','客家人','閩南人','新住民'],0,'許多原住民族以小米為重要作物，也會把米放進竹筒裡烤成竹筒飯。'],
+ ['s-food','臺灣街頭常見越南河粉、泰式料理，這反映了什麼？',['新住民帶來多元的飲食文化','只有臺灣人會煮菜','食物和文化無關','外國料理都一樣'],0,'不同文化接觸交流，讓家鄉的飲食更加豐富。'],
+ ['s-cloth','原住民族在什麼場合最常穿傳統服飾？',['祭典或重要節慶','每天上學','游泳時','睡覺時'],0,'傳統服飾有族群的圖紋和意義，常在祭典、慶典時穿著。'],
+ ['s-cloth','把傳統服飾的圖紋設計在現代衣服或包包上，這是文化的什麼表現？',['傳承與創新','破壞文化','完全不變','模仿外國'],0,'保留傳統特色並加入新創意，就是文化的傳承與創新。'],
+ ['s-lang','泰雅族傳統的命名方式是什麼？',['自己的名字後面連上父親的名字','用出生的月份當名字','用門牌號碼命名','所有人同一個名字'],0,'泰雅族採親子連名；達悟族則是「親從子名」，父母會隨長子的名字改稱。'],
+ ['s-lang','聽到同學說不同的家鄉語言時，應該怎麼做？',['尊重並好奇學習','嘲笑他的口音','要求他不要說','假裝沒聽到'],0,'每種語言都承載文化，尊重不同語言是多元社會的重要態度。'],
+ ['s-respect','不同文化接觸和交流，可能帶來什麼結果？',['衝突、合作，也可能產生創新','一定只會吵架','什麼都不會改變','文化全部消失'],0,'文化交流可能有衝突，但透過了解和尊重，也能合作、創造新文化。']]},
+{id:'so5',name:'家鄉的節慶與禮俗',goal:'認識傳統節慶、原住民族祭典、現代節日與生命禮俗的意義。',lessons:['第 1 課　家鄉的傳統節慶','第 2 課　家鄉的現代節日','第 3 課　家鄉的生命禮俗'],
+ map:[['傳統節慶',['春節','元宵：燈籠、燈謎','端午：龍舟、粽子','中秋：賞月、月餅']],['原住民族祭典',['阿美族：豐年祭','達悟族：飛魚祭','賽夏族：矮靈祭','布農族：射耳祭']],['現代節日',['兒童節 4/4','母親節','父親節 8/8','教師節 9/28']],['生命禮俗',['滿月、抓周','成年、婚禮、喪禮']]],
+ qs:[
+ ['s-fest','提燈籠、猜燈謎、吃湯圓是哪一個節日的習俗？',['元宵節','端午節','中秋節','清明節'],0,'元宵節在農曆正月十五，是新年後第一個月圓的晚上。'],
+ ['s-fest','划龍舟、吃粽子是哪一個節日的習俗？',['端午節','中秋節','春節','重陽節'],0,'端午節在農曆五月五日，有划龍舟、吃粽子、掛香包等習俗。'],
+ ['s-fest','吃月餅、賞月是哪一個節日常見的活動？',['中秋節','元宵節','端午節','春節'],0,'中秋節在農曆八月十五日，象徵團圓。'],
+ ['s-indig','阿美族在夏季舉行、感謝豐收的重要祭典是什麼？',['豐年祭','飛魚祭','矮靈祭','射耳祭'],0,'阿美族豐年祭；達悟族飛魚祭；賽夏族矮靈祭；布農族射耳祭。'],
+ ['s-indig','住在蘭嶼、以捕飛魚聞名的是哪一族？',['達悟族','泰雅族','排灣族','阿美族'],0,'達悟族住在蘭嶼，飛魚祭是重要的祭典。'],
+ ['s-modern','下面哪一個是「現代節日」？',['母親節','中秋節','端午節','元宵節'],0,'現代節日是近代為了特別意義而訂定的，如母親節、父親節、兒童節、教師節。'],
+ ['s-modern','臺灣的教師節是哪一天？',['9 月 28 日','8 月 8 日','4 月 4 日','10 月 10 日'],0,'9 月 28 日是孔子誕辰，訂為教師節；8 月 8 日是父親節；4 月 4 日是兒童節。'],
+ ['s-modern','平溪天燈節、宜蘭童玩節屬於哪一類節慶？',['地方特色節慶','原住民族祭典','國定假日','宗教儀式'],0,'許多地方結合在地特色舉辦節慶，帶動觀光與地方發展。'],
+ ['s-rite','人生中的出生、成年、結婚、死亡所舉行的儀式，統稱為什麼？',['生命禮俗','現代節日','體育活動','社團活動'],0,'生命禮俗包含滿月、抓周、成年禮、婚禮、喪禮，各族群各有特色。'],
+ ['s-rite','嬰兒滿一歲時，讓他抓取筆、書等物品，這個習俗叫做什麼？',['抓周','做滿月','成年禮','收涎'],0,'抓周是周歲的習俗，表達家人對孩子未來的祝福。']]},
+{id:'so6',name:'家鄉故事導覽員',goal:'學會用訪問、查資料、實地踏查探究家鄉，並把資料整理成地圖和圖表介紹家鄉。',lessons:['探究：發現家鄉的變化','蒐集資料：訪問、查詢、實察','整理與分享：製作地圖與圖表'],
+ map:[['蒐集資料',['訪問耆老','查文獻、網路','實地踏查']],['判讀',['比對多個可靠來源']],['整理呈現',['地圖、照片','長條圖、折線圖']],['家鄉變遷',['古蹟反映歷史','土地利用改變']]],
+ qs:[
+ ['s-inquiry','想了解家鄉過去的樣子，下面哪一種方法最直接？',['訪問家鄉的長輩（耆老）','只看卡通','用猜的','問外國網友'],0,'訪問耆老、查閱文獻、實地踏查都是蒐集家鄉資料的好方法。'],
+ ['s-inquiry','在網路上找到家鄉的資料後，應該先做什麼？',['比對多個可靠來源，判斷是否正確','馬上全部相信','直接整段抄進報告','分享給所有人'],0,'網路資料不一定正確，要和政府網站、圖書館資料等可靠來源比對。'],
+ ['s-history','家鄉的古蹟、老街和老照片，可以幫助我們了解什麼？',['家鄉的歷史變遷','明天的天氣','數學公式','外國的風景'],0,'不同時代的人物、事件與文物古蹟，反映了地方的歷史變遷。'],
+ ['s-inquiry','實地踏查時，下面哪一樣最不需要帶？',['電動玩具','筆記本和筆','相機或平板','地圖'],0,'踏查要帶記錄工具和地圖，並注意安全。'],
+ ['s-inquiry','要呈現家鄉十年來人口的變化，最適合用哪一種圖表？',['折線圖','食譜','歌詞','地址表'],0,'折線圖適合表現數量隨時間變化的趨勢。'],
+ ['s-history','以前的田地變成了住宅區和捷運站，這說明了什麼？',['居住地方的環境隨社會與經濟發展而改變','環境從來不變','田地會自己變成房子','捷運是自然形成的'],0,'社會經濟發展會改變土地利用和居民的生活方式。'],
+ ['s-inquiry','訪問長輩時，下面哪一種行為最有禮貌？',['事先約時間，訪問後說謝謝','突然闖進別人家','一直打斷對方說話','不做任何記錄'],0,'訪問前準備問題、約好時間；訪問時專心聆聽並記錄。'],
+ ['s-inquiry','擔任「家鄉導覽員」介紹家鄉時，最好的做法是什麼？',['整理資料，用地圖、照片和圖表清楚說明','隨便說說','只介紹自己家','照抄網路文章'],0,'把蒐集的資料整理成地圖和圖表，有條理的介紹家鄉特色。']]}
+]}};
+const ORDER=['zh','ma','na','so'];
+const PREFIX={zh:'z-',ma:'m-',na:'n-',so:'s-'};
+const DEF={};ORDER.forEach(s=>SUBJ[s].units.forEach(u=>{DEF[u.id]={map:JSON.parse(JSON.stringify(u.map)),lessons:u.lessons.slice(),goal:u.goal}}));
+
+/* ========== 原創 Q 版角色（SVG） ========== */
+const HERO_IMG="data:image/jpeg;base64,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";
+function heroSVG(mood){
+  const badge=mood==='cheer'?'<span class="hb">⭐</span>':mood==='sad'?'<span class="hb">💦</span>':'';
+  return `<span class="heroimg ${mood||''}"><img src="${HERO_IMG}" alt="小騎士"/>${badge}</span>`}
+function palSVG(s){
+  if(s==='zh')return `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><ellipse cx="50" cy="95" rx="26" ry="3.5" fill="#000" opacity=".12"/>
+   <path d="M24 30 L30 12 L40 26 M76 30 L70 12 L60 26" fill="#6B4BB8"/><ellipse cx="50" cy="58" rx="34" ry="36" fill="#7C5CD6"/><ellipse cx="50" cy="70" rx="20" ry="20" fill="#E9E0FF"/>
+   <path d="M38 66 h24 M38 72 h24 M38 78 h18" stroke="#B9A6F0" stroke-width="2.5" stroke-linecap="round"/>
+   <circle cx="36" cy="44" r="13" fill="#fff"/><circle cx="64" cy="44" r="13" fill="#fff"/><circle cx="38" cy="45" r="6.5" fill="#2B2F45"/><circle cx="62" cy="45" r="6.5" fill="#2B2F45"/><circle cx="40" cy="42.5" r="2.2" fill="#fff"/><circle cx="64" cy="42.5" r="2.2" fill="#fff"/>
+   <path d="M45 54 L55 54 L50 61Z" fill="#F2A73B"/><path d="M84 66 L96 46 L99 48 L88 68Z" fill="#3B2F25"/><path d="M84 66 L88 68 L84 74Z" fill="#2B2F45"/></svg>`;
+  if(s==='ma')return `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><ellipse cx="50" cy="95" rx="26" ry="3.5" fill="#000" opacity=".12"/>
+   <line x1="50" y1="6" x2="50" y2="18" stroke="#2B4F9A" stroke-width="3"/><circle cx="50" cy="6" r="5" fill="#FFC23D"/>
+   <rect x="18" y="18" width="64" height="50" rx="16" fill="#3A78D8"/><rect x="26" y="26" width="48" height="34" rx="10" fill="#DFF0FF"/>
+   <path d="M34 42 Q39 36 44 42 M56 42 Q61 36 66 42" stroke="#2B2F45" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M44 50 Q50 55 56 50" stroke="#2B2F45" stroke-width="3" fill="none" stroke-linecap="round"/>
+   <rect x="28" y="70" width="44" height="22" rx="9" fill="#2F64B8"/><path d="M50 74 v14 M43 81 h14" stroke="#FFC23D" stroke-width="4" stroke-linecap="round"/>
+   <circle cx="14" cy="44" r="6" fill="#2F64B8"/><circle cx="86" cy="44" r="6" fill="#2F64B8"/></svg>`;
+  if(s==='na')return `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><ellipse cx="50" cy="95" rx="26" ry="3.5" fill="#000" opacity=".12"/>
+   <path d="M50 30 Q46 14 30 12 Q34 28 50 30Z" fill="#7BD88F"/><path d="M50 30 Q56 10 74 10 Q68 28 50 30Z" fill="#4CC07A"/><path d="M50 30 v8" stroke="#3E9E5E" stroke-width="3"/>
+   <path d="M50 34 Q86 56 80 76 Q74 94 50 94 Q26 94 20 76 Q14 56 50 34Z" fill="#43B86C"/><ellipse cx="42" cy="56" rx="6" ry="9" fill="#fff" opacity=".35"/>
+   <circle cx="39" cy="70" r="5.5" fill="#1F3B2A"/><circle cx="61" cy="70" r="5.5" fill="#1F3B2A"/><circle cx="41" cy="68" r="1.8" fill="#fff"/><circle cx="63" cy="68" r="1.8" fill="#fff"/>
+   <ellipse cx="31" cy="79" rx="5" ry="3" fill="#FF8FA0" opacity=".7"/><ellipse cx="69" cy="79" rx="5" ry="3" fill="#FF8FA0" opacity=".7"/><path d="M45 80 Q50 85 55 80" stroke="#1F3B2A" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+  return `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><ellipse cx="50" cy="95" rx="26" ry="3.5" fill="#000" opacity=".12"/>
+   <path d="M18 44 L22 8 L44 30Z M82 44 L78 8 L56 30Z" fill="#E8792E"/><path d="M24 36 L26 16 L38 30Z M76 36 L74 16 L62 30Z" fill="#FFE1C4"/>
+   <path d="M14 52 Q14 22 50 22 Q86 22 86 52 Q86 80 50 88 Q14 80 14 52Z" fill="#F28A3B"/><path d="M22 60 Q36 58 50 76 Q64 58 78 60 Q74 82 50 88 Q26 82 22 60Z" fill="#FFF3E6"/>
+   <ellipse cx="36" cy="52" rx="5.5" ry="7" fill="#2B2F45"/><ellipse cx="64" cy="52" rx="5.5" ry="7" fill="#2B2F45"/><circle cx="38" cy="49.5" r="2" fill="#fff"/><circle cx="66" cy="49.5" r="2" fill="#fff"/>
+   <ellipse cx="50" cy="68" rx="5" ry="3.5" fill="#2B2F45"/>
+   <g transform="translate(66 64)"><path d="M12 0 C5 0 0 5 0 11 C0 19 12 30 12 30 C12 30 24 19 24 11 C24 5 19 0 12 0Z" fill="#E5484D"/><circle cx="12" cy="11" r="4.5" fill="#fff"/></g></svg>`}
+function monSVG(color,boss,hit){
+  const c=color||'#8E6BDB';
+  return `<svg viewBox="0 0 120 120" class="art ${hit?'hit':''}" aria-hidden="true"><ellipse cx="60" cy="114" rx="40" ry="5" fill="#000" opacity=".14"/>
+  ${boss?'<path d="M34 26 L42 6 L52 20 L60 2 L68 20 L78 6 L86 26Z" fill="#FFC23D" stroke="#C98A00" stroke-width="2"/>':''}
+  <path d="M30 40 L22 18 L44 32Z M90 40 L98 18 L76 32Z" fill="#F5F0FF" stroke="${c}" stroke-width="3"/>
+  <path d="M60 24 C96 24 108 58 106 84 C105 102 92 110 80 106 C74 112 66 112 60 106 C54 112 46 112 40 106 C28 110 15 102 14 84 C12 58 24 24 60 24Z" fill="${c}"/>
+  <ellipse cx="44" cy="46" rx="10" ry="7" fill="#fff" opacity=".25"/>
+  <path d="M34 56 L52 62 M86 56 L68 62" stroke="#2B2F45" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="45" cy="70" rx="8" ry="9" fill="#fff"/><ellipse cx="75" cy="70" rx="8" ry="9" fill="#fff"/><circle cx="47" cy="72" r="4.5" fill="#2B2F45"/><circle cx="73" cy="72" r="4.5" fill="#2B2F45"/>
+  <path d="M46 90 Q60 82 74 90" stroke="#2B2F45" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M50 88 L53 95 L56 87Z M64 87 L67 95 L70 88Z" fill="#fff"/></svg>`}
+function embSVG(s){
+  if(s==='zh')return `<svg viewBox="0 0 100 80" class="art" aria-hidden="true"><path d="M8 18 Q30 10 50 20 Q70 10 92 18 L92 70 Q70 62 50 72 Q30 62 8 70Z" fill="#fff" stroke="#25A066" stroke-width="4" stroke-linejoin="round"/><path d="M50 20 V72" stroke="#25A066" stroke-width="3"/><path d="M18 30 h22 M18 40 h22 M18 50 h16 M60 30 h22 M60 40 h18" stroke="#9FD9BC" stroke-width="3" stroke-linecap="round"/><g transform="rotate(35 78 40)"><rect x="74" y="2" width="8" height="46" rx="3" fill="#8B5A2B"/><path d="M74 48 h8 l-4 16Z" fill="#2B2F45"/></g><text x="66" y="60" font-size="16" font-family="serif" fill="#25A066" font-weight="700">語</text></svg>`;
+  if(s==='ma')return `<svg viewBox="0 0 100 80" class="art" aria-hidden="true"><rect x="6" y="8" width="88" height="64" rx="10" fill="#fff" stroke="#3A78D8" stroke-width="4"/><path d="M8 28 h84 M8 48 h84" stroke="#3A78D8" stroke-width="3"/>${[[20,18,'#FFC23D'],[32,18,'#FFC23D'],[64,18,'#E5484D'],[44,38,'#3A78D8'],[56,38,'#3A78D8'],[80,38,'#25A066'],[20,58,'#E5484D'],[68,58,'#FFC23D'],[80,58,'#FFC23D']].map(([x,y,f])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="5" fill="${f}"/>`).join('')}</svg>`;
+  if(s==='na')return `<svg viewBox="0 0 100 80" class="art" aria-hidden="true"><path d="M36 6 h22 M40 6 v22 L18 66 Q14 74 24 74 H70 Q80 74 76 66 L54 28 V6" fill="#fff" stroke="#EC8420" stroke-width="4" stroke-linejoin="round"/><path d="M26 54 H68 L74 66 Q76 70 70 70 H24 Q18 70 20 66Z" fill="#FFB86B"/><circle cx="40" cy="62" r="4" fill="#fff" opacity=".8"/><circle cx="54" cy="58" r="3" fill="#fff" opacity=".8"/><path d="M74 30 Q92 20 96 4 Q76 6 72 24Z" fill="#4CC07A"/><path d="M72 30 Q82 18 92 10" stroke="#2F8A55" stroke-width="2" fill="none"/></svg>`;
+  return `<svg viewBox="0 0 100 80" class="art" aria-hidden="true"><circle cx="44" cy="42" r="32" fill="#9ED8F5" stroke="#DA5279" stroke-width="4"/><path d="M24 26 Q34 20 38 30 Q30 38 34 46 Q22 48 18 40Z M46 18 Q60 16 66 28 Q56 30 54 40 Q46 34 46 18Z M42 52 Q56 48 62 58 Q52 70 44 66Z" fill="#6CC28A"/><path d="M12 42 h64 M44 10 v64" stroke="#fff" stroke-width="2" opacity=".6"/><g transform="translate(66 6)"><path d="M14 0 C6 0 0 6 0 13 C0 23 14 36 14 36 C14 36 28 23 28 13 C28 6 22 0 14 0Z" fill="#DA5279"/><circle cx="14" cy="13" r="5.5" fill="#fff"/></g></svg>`}
+function shieldLogo(){return `<svg viewBox="0 0 100 118" class="art" role="img" aria-label="皓字盾牌">
+  <path d="M50 3 L94 15 Q97 70 50 115 Q3 70 6 15Z" fill="#6E7482" stroke="#23262F" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M50 3 L94 15 Q97 70 50 115 L50 3Z" fill="#555B69"/>
+  <path d="M50 15 L83 24 Q84 66 50 101 Q16 66 17 24Z" fill="#B3262E" stroke="#FFC23D" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M50 15 L83 24 Q84 66 50 101Z" fill="#8E1C24"/>
+  <path d="M12 30 l6 4 M88 30 l-6 4 M20 74 l5 -3 M80 74 l-5 -3 M40 108 l3 -5" stroke="#2C3039" stroke-width="2.2" stroke-linecap="round"/>
+  ${[[14,20],[86,20],[11,46],[89,46],[24,82],[76,82],[50,9]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.4" fill="#D9DDE6" stroke="#23262F" stroke-width="1.5"/>`).join('')}
+  <text x="50" y="76" text-anchor="middle" font-size="56" font-family="'Zhi Mang Xing','KaiTi','DFKai-SB','BiauKai','STKaiti',cursive" fill="#FFE08A" stroke="#3A1A00" stroke-width="2.4" paint-order="stroke" transform="rotate(-6 50 60)">皓</text></svg>`}
+const CICON={'z-xing':'👀','z-duoyin':'🔊','z-bushou':'🧩','z-xu':'⏪','z-ju':'🔗','z-ci':'📚','z-person':'🧑‍🏫','z-read':'🔍','z-text':'🗞️','z-write':'✏️',
+'m-place':'🏠','m-read':'🗣️','m-compare':'⚖️','m-bigadd':'➕','m-mul':'✖️','m-mulword':'🧃','m-angle-type':'📐','m-angle-calc':'🔀','m-rotate':'🕒','m-div':'➗','m-divword':'🍬','m-km':'🛣️','m-tri-side':'🔺','m-tri-angle':'🔻','m-congruent':'👯','m-dec':'📏','m-decadd':'🧾','m-order':'🚦','m-twostep':'🪜','m-frac':'🍕','m-fracconv':'🔄','m-fracadd':'🥧','m-graph':'📊',
+'n-soil':'🪨','n-water':'🌊','n-protect':'🌳','n-quake':'🏚️','n-plant':'🪷','n-fish':'🐟','n-env':'♻️','n-sound':'🔔','n-light':'🔦','n-reflect':'🪞','n-use':'🚑','n-circuit':'💡','n-conductor':'📎','n-series':'🔋','n-safety':'⚠️',
+'s-map4':'🗺️','s-dir':'🧭','s-scale':'📏','s-maptype':'📱','s-land':'⛰️','s-climate':'🌀','s-landuse':'🍵','s-pop':'👨‍👩‍👧','s-aging':'👴','s-migrate':'🚚','s-food':'🍜','s-cloth':'👘','s-lang':'💬','s-respect':'🤝','s-fest':'🏮','s-indig':'🪘','s-modern':'🎂','s-rite':'👶','s-inquiry':'🎤','s-history':'🏯'};
+const subOfC=k=>ORDER.find(s=>k.startsWith(PREFIX[s]));
+function ctile(k,opt){opt=opt||{};const s=subOfC(k),st=S.cstat[k]||{r:0,w:0},tot=st.r+st.w,acc=tot?Math.round(st.r/tot*100):null,pend=pendingWrong().filter(w=>w.c===k).length;
+  return `<div class="ctile ${pend?'weak':''}" style="--c:var(--${s})"><span class="ic" aria-hidden="true">${CICON[k]||'⭐'}</span><h3>${CON[k][0]}</h3>
+  <div class="meter">${acc==null?'<span>還沒練習</span>':`<span class="pbar" style="--c:var(--${acc>=80?'ok':s})"><i style="width:${acc}%"></i></span><span>${acc}%</span>`}${pend?`<span style="color:var(--bad)">👾×${pend}</span>`:''}</div>
+  <details><summary>看重點</summary><p>${CON[k][1]}</p></details>${opt.noBtn?'':`<div class="go"><button class="btn sm go" data-act="drill" data-c="${k}">⚔️ 特訓</button></div>`}</div>`}
+const PAL={zh:'墨墨',ma:'算算',na:'芽芽',so:'圖圖'};
+const MONCOL={zh:'#7C5CD6',ma:'#4C6FD0',na:'#E07A2E',so:'#C9466E'};
+const STK={zh1:'🏀',zh2:'🧗',zh3:'🌏',zh4:'🪄',ma1:'🔢',ma2:'✖️',ma3:'📐',ma4:'➗',ma5:'🛣️',ma6:'🔺',ma7:'📏',ma8:'🧮',ma9:'🍕',ma10:'📊',na1:'🌋',na2:'🐟',na3:'🔦',na4:'💡',so1:'🗺️',so2:'⛰️',so3:'👨‍👩‍👧',so4:'🍜',so5:'🏮',so6:'🎤'};
+
+/* ========== 狀態 ========== */
+const SKEY='hero4a.state',CKEY='hero4a.custom';
+const freshS=()=>({xp:0,units:{},wrong:{},log:[],answered:0,correct:0,indep:0,cstat:{}});
+const freshC=()=>({qs:{},content:{},genOff:{},lock:{},allOpen:false,pin:'0000',name:'小勇者',perQuiz:8,pass:70});
+let S=Object.assign(freshS(),ld(SKEY,{}));
+let C=Object.assign(freshC(),ld(CKEY,{}));
+const saveS=()=>sv(SKEY,S),saveC=()=>sv(CKEY,C);
+let V={name:'home'},Q=null,P={authed:false,tab:'lock',sub:'zh',uid:'zh1',edit:null,resetArm:false},WF='all',HIST_SUB='all',MIX={};
+
+/* ========== 資料存取 ========== */
+const unitOf=id=>{for(const s of ORDER){const u=SUBJ[s].units.find(x=>x.id===id);if(u)return{s,u}}return null};
+const content=u=>{const c=C.content[u.id]||{};return{map:c.map||u.map,lessons:c.lessons||u.lessons,goal:c.goal??u.goal}};
+const defQs=u=>u.qs.map((t,i)=>({id:`${u.id}-${i}`,t:'mc',c:t[0],q:t[1],o:t[2].slice(),a:t[3],e:t[4]}));
+const bank=u=>C.qs[u.id]?C.qs[u.id]:defQs(u);
+const gens=u=>(GEN[u.id]&&!C.genOff[u.id])?GEN[u.id]:[];
+function genQ(g,u,s){const q=g[1]();q.id='g-'+hs(q.q+JSON.stringify(q.o||q.a));q.u=u.id;q.s=s;return q}
+const tag=(q,u,s)=>Object.assign({},q,{u:u.id,s});
+const best=id=>(S.units[id]||{}).best||0;
+function isOpen(s,i){const u=SUBJ[s].units;if(C.allOpen)return true;const id=i===u.length?s+'-boss':u[i].id;const ov=C.lock[id];if(ov==='open')return true;if(ov==='lock')return false;if(i===u.length)return u.every(x=>best(x.id)>0);return i===0||best(u[i-1].id)>0}
+const starsHTML=n=>`<span class="stars" aria-label="${n} 顆星">${'★'.repeat(n)}<span class="off">${'★'.repeat(3-n)}</span></span>`;
+const totalStars=()=>Object.values(S.units).reduce((a,b)=>a+(b.best||0),0);
+const passedCount=s=>SUBJ[s].units.filter(u=>best(u.id)>0).length;
+const pendingWrong=()=>Object.values(S.wrong).filter(w=>!w.mastered);
+const TITLES=['見習小劍士','木刀劍士','銅劍劍士','銀刃劍士','金刃劍士','傳說劍士','星之守護者'];
+const level=()=>Math.floor(S.xp/300)+1;
+const title=()=>TITLES[Math.min(level()-1,TITLES.length-1)];
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
+const fmtD=ts=>{const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+const qh=q=>q.html?q.q:esc(q.q);
+const oh=(q,x)=>q.html?x:esc(x);
+const ansText=q=>q.t==='num'?`${+(+q.a).toFixed(4)}${q.unit?' '+q.unit:''}`:q.o[q.a];
+const allUnits=()=>ORDER.reduce((a,s)=>a+SUBJ[s].units.length,0);
+const allPassed=()=>ORDER.reduce((a,s)=>a+passedCount(s),0);
+
+/* ========== 提示 ========== */
+function hintsOf(q){
+  const h1=q.h?q.h:(CON[q.c]?`想一想「${CON[q.c][0]}」：${CON[q.c][1]}`:'把題目再慢慢讀一次，圈出關鍵字。');
+  let h2;
+  if(q.t==='mc'){const wrong=q.o.map((_,i)=>i).filter(i=>i!==q.a);h2=wrong.length>=2?{elim:shuffle(wrong).slice(0,wrong.length-1),text:'已經幫你刪掉錯的選項，剩下兩個選一個！'}:{text:'答案就在剩下的選項裡，再看一次題目。'}}
+  else{const a=+q.a;if(Number.isInteger(a)){const s=String(Math.abs(a));h2={text:s.length===1?'答案是一位數。':`答案是 ${s.length} 位數，最前面的數字是 ${s[0]}。`}}else h2={text:`答案在 ${Math.floor(a)} 和 ${Math.floor(a)+1} 之間。`}}
+  return[{text:h1},h2]}
+
+/* ========== 頁首與導覽 ========== */
+function header(){
+  const xp=S.xp%300;
+  return `<header class="top"><div class="wrap"><button class="brand" data-act="nav" data-v="home"><span class="logo">${shieldLogo()}</span><b>勇者學園</b></button>
+  <div class="me"><span class="lv">Lv.${level()}</span><span class="xpbar" title="經驗值 ${xp}/300"><i style="width:${xp/3}%"></i></span><span class="st">★ ${totalStars()}</span></div></div></header>`}
+function bottomNav(){
+  const w=pendingWrong().length,on=n=>V.name===n||(n==='home'&&['subject','unit','quiz','result'].includes(V.name));
+  const b=(n,i,l,x='')=>`<button class="${on(n)?'on':''}" data-act="nav" data-v="${n}"><span class="i" aria-hidden="true">${i}</span>${l}${x}</button>`;
+  return `<nav class="bnav" aria-label="主選單"><div class="wrap">${b('home','🗺️','冒險')}${b('wrong','📒','錯題',w?`<span class="badge">${w}</span>`:'')}${b('concept','🍙','補給')}${b('album','🏅','圖鑑')}${b('history','📈','歷程')}${b('parent','🔒','家長')}</div></nav>`}
+
+/* ========== 首頁 ========== */
+function vHome(){
+  const w=pendingWrong().length;
+  const greet=allPassed()===0?'今天開始冒險吧！先挑一個區域。':w?`有 ${w} 隻錯錯怪在搗蛋，一起打倒牠們！`:'今天要去哪裡冒險？';
+  return `<section class="scene"><div class="who bob">${heroSVG('cheer')}</div><div><div class="bubble">嗨，${esc(C.name)}！${greet}</div>
+   <div class="stats"><span class="chip">🏅 ${title()}</span><span class="chip">⭐ ${totalStars()} 顆星</span><span class="chip">🚩 ${allPassed()}/${allUnits()} 關</span></div></div></section>
+  ${w?`<div class="mon-card"><div class="m">${monSVG('#C9466E')}</div><div class="grow"><b>錯錯怪 ×${w}</b><span class="note">答對兩次就能打倒一隻</span></div><button class="btn go" data-act="retrain" data-s="all">出擊！</button></div>`:''}
+  <h2 class="sec">選一個冒險區域</h2>
+  <div class="realms">${ORDER.map(s=>{const sj=SUBJ[s],n=sj.units.length,p=passedCount(s),st=sj.units.reduce((a,u)=>a+best(u.id),0);
+   return `<button class="realm" style="--c:var(--${s})" data-act="subject" data-s="${s}"><div class="pic"><span class="emb">${embSVG(s)}</span><span class="pal">${palSVG(s)}</span></div>
+   <h3>${sj.realm}</h3><div class="sub"><span>${sj.name}・${sj.ver.split('・')[0]}</span><span class="stars">★${st}</span></div><span class="pbar" style="--c:var(--${s})"><i style="width:${p/n*100}%"></i></span><span class="note">${p}/${n} 關</span></button>`}).join('')}</div>
+  <p class="foot">不用登入・紀錄存在這台裝置</p>`}
+
+/* ========== 區域地圖 ========== */
+function vSubject(){
+  const s=V.s,sj=SUBJ[s],X=[0,14,28,14];
+  const here=sj.units.findIndex((u,i)=>isOpen(s,i)&&!best(u.id));
+  const nodes=sj.units.map((u,i)=>{const open=isOpen(s,i),b=best(u.id),h=i===here;
+    return `<button class="stop ${open?'':'locked'} ${h?'here':''}" style="--c:var(--${s});--x:${X[i%4]}%" data-act="${open?'unit':'locked'}" data-u="${u.id}">
+    ${h?`<span class="mini bob">${heroSVG()}</span>`:''}<span class="ball">${open?STK[u.id]:'🔒'}<span class="n">${i+1}</span></span>
+    <span class="tx"><b>${esc(u.name)}</b>${open?starsHTML(b):'<small>先過上一關</small>'}</span></button>`}).join('');
+  const bi=sj.units.length,bo=isOpen(s,bi);
+  const boss=`<button class="stop boss ${bo?'':'locked'}" style="--c:var(--${s});--x:${X[bi%4]}%" data-act="${bo?'boss':'locked'}" data-s="${s}"><span class="ball">${monSVG(MONCOL[s],true)}</span><span class="tx"><b>魔王城</b>${bo?starsHTML(best(s+'-boss')):'<small>全部過關才打得開</small>'}</span></button>`;
+  if(!MIX[s])MIX[s]=new Set(sj.units.filter((u,i)=>isOpen(s,i)).map(u=>u.id));
+  return `<button class="back" data-act="nav" data-v="home">← 回首頁</button>
+  <div class="rhead" style="--c:var(--${s})"><div class="pal">${palSVG(s)}</div><div><h1>${sj.realm}</h1><p>${PAL[s]}：跟我來，一關一關往前走！</p><p>${sj.name}・${sj.ver}・${passedCount(s)}/${sj.units.length} 關</p></div></div>
+  <div class="trail">${nodes}${boss}</div>
+  <section class="card mix" style="--c:var(--${s})"><h3>🎯 段考特訓</h3><p class="note" style="margin:4px 0 0">勾考試範圍，最多 20 題不重複。不影響星星。</p>
+   <div class="pick">${sj.units.map(u=>`<label><input type="checkbox" data-act="mixpick" data-s="${s}" value="${u.id}" ${MIX[s].has(u.id)?'checked':''}>${STK[u.id]} ${esc(u.name)}</label>`).join('')}</div>
+   <button class="btn go" data-act="mix" data-s="${s}">開始特訓</button></section>`}
+
+/* ========== 關卡頁 ========== */
+function vUnit(){
+  const {s,u}=unitOf(V.u),c=content(u),tab=V.tab||'guide';
+  const concepts=[...new Set(bank(u).map(q=>q.c).concat(gens(u).map(g=>g[0])))].filter(k=>CON[k]);
+  let body='';
+  if(tab==='guide')body=`<div class="talk"><div>${palSVG(s)}</div><div class="bubble">${esc(c.goal)}</div></div>
+    <h2 class="sec" style="margin-top:6px">📖 這一關要學</h2><div class="les" style="--c:var(--${s})">${c.lessons.map((l,i)=>`<span><i>${i+1}</i>${esc(l)}</span>`).join('')}</div>
+    <h2 class="sec">💎 觀念卡</h2><div class="ctiles">${concepts.map(k=>ctile(k,{noBtn:true})).join('')}</div>
+    <div class="row" style="margin-top:20px;justify-content:center"><button class="btn go big" data-act="start" data-u="${u.id}">⚔️ 開始闖關</button></div>`;
+  else if(tab==='map')body=`<div class="mm" style="--c:var(--${s})"><div class="mm-root">${STK[u.id]} ${esc(u.name)}</div><div class="mm-stem"></div><div class="mm-br">${c.map.map(b=>`<details class="mm-b" open><summary>${esc(b[0])}</summary><ul>${b[1].map(l=>`<li>${esc(l)}</li>`).join('')}</ul></details>`).join('')}</div></div>
+    <div class="row" style="justify-content:center;margin-top:20px"><button class="btn go big" data-act="start" data-u="${u.id}">⚔️ 開始闖關</button></div>`;
+  else{const st=S.units[u.id]||{};body=`<div class="card start" style="--c:var(--${s})"><div class="m bob">${monSVG(MONCOL[s])}</div><div>
+    <h2 style="font-size:26px">${esc(u.name)}的魔物出現了！</h2>${starsHTML(best(u.id))}
+    <div class="rules"><span class="chip">📝 ${C.perQuiz} 題</span><span class="chip">⏳ 不計時</span><span class="chip">💡 每題 2 次提示</span><span class="chip">🔁 答錯可再想一次</span></div>
+    <p class="note" style="margin:0 0 12px">挑戰 ${st.plays||0} 次・最佳 ${st.bestScore||'—'}</p><button class="btn go big" data-act="start" data-u="${u.id}">⚔️ 出發！</button></div></div>`}
+  return `<button class="back" data-act="subject" data-s="${s}">← 回${SUBJ[s].realm}</button>
+  <div class="uhead" style="--c:var(--${s})"><span class="stk">${STK[u.id]}</span><div><h1>${esc(u.name)}</h1><span class="note">${SUBJ[s].name}・第 ${SUBJ[s].units.indexOf(u)+1} 關</span></div></div>
+  <div class="utabs" style="--c:var(--${s})">${[['guide','📖 課程'],['map','🧠 心智圖'],['quiz','⚔️ 闖關']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="utab" data-t="${k}">${l}</button>`).join('')}</div>${body}`}
+
+/* ========== 出題 ========== */
+function buildUnitQuiz(id){
+  const {s,u}=unitOf(id),n=+C.perQuiz||8,fx=shuffle(bank(u)).map(q=>tag(q,u,s)),g=gens(u);
+  let list=[];
+  if(g.length){const k=Math.min(fx.length,Math.ceil(n/3));list=fx.slice(0,k);let guard=0;const seen=new Set(list.map(q=>q.q));while(list.length<n&&guard++<60){const q=genQ(pick(g),u,s);if(!seen.has(q.q)){seen.add(q.q);list.push(q)}}}
+  else list=fx.slice(0,n);
+  return shuffle(list)}
+function poolFrom(units,s,genEach){const pool=[];units.forEach(u=>{bank(u).forEach(q=>pool.push(tag(q,u,s)));gens(u).forEach(g=>{for(let i=0;i<genEach;i++)pool.push({gen:g,u,s})})});return pool}
+function realize(list,n){const out=[],seen=new Set();for(const x of list){const q=x.gen?genQ(x.gen,x.u,x.s):x;if(seen.has(q.q))continue;seen.add(q.q);out.push(q);if(out.length>=n)break}return out}
+const buildBoss=s=>realize(shuffle(poolFrom(SUBJ[s].units,s,1)),Math.max(10,+C.perQuiz||8));
+const buildMix=(s,ids)=>realize(shuffle(poolFrom(SUBJ[s].units.filter(u=>ids.includes(u.id)),s,2)),20);
+function buildConcept(c){const pool=[];ORDER.forEach(s=>SUBJ[s].units.forEach(u=>{bank(u).filter(q=>q.c===c).forEach(q=>pool.push(tag(q,u,s)));gens(u).filter(g=>g[0]===c).forEach(g=>{for(let i=0;i<3;i++)pool.push({gen:g,u,s})})}));return realize(shuffle(pool),6)}
+function startQuiz(mode,list,meta){
+  if(!list.length){toast('目前沒有可以練習的題目');return}
+  Q=Object.assign({mode,list,i:0,res:[],combo:0,maxCombo:0,xp:0,wrongs:[],mastered:0},meta);
+  prepQ();go({name:'quiz'})}
+function prepQ(){const q=Q.list[Q.i];Object.assign(Q,{phase:'ask',tries:0,hints:0,sel:null,bad:[],elim:[],typed:'',anim:false,lastRes:null});Q.order=q.t==='mc'?shuffle(q.o.map((_,i)=>i)):null;Q.H=hintsOf(q)}
+
+function vQuiz(){
+  const q=Q.list[Q.i],s=q.s,n=Q.list.length,done=Q.phase==='done';
+  const dots=Q.list.map((_,i)=>{const r=Q.res[i];return `<i class="${r==='indep'?'ok':r==='help'?'hp':r==='miss'?'no':''} ${i===Q.i?'now':''}"></i>`}).join('');
+  const hpLeft=n-Q.res.filter(r=>r!=='miss').length;
+  const opts=q.t==='mc'?`<div class="opts">${Q.order.map((oi,k)=>{let cls='',dis=done;
+      if(done){if(oi===q.a)cls='right';else if(Q.bad.includes(oi))cls='wrong'}
+      else{if(Q.bad.includes(oi)){cls='wrong';dis=true}else if(Q.elim.includes(oi)){cls='gone';dis=true}else if(Q.sel===oi)cls='sel'}
+      return `<button class="opt ${cls}" data-act="pick" data-i="${oi}" ${dis?'disabled':''}><span class="k">${'ABCD'[k]}</span><span>${oh(q,q.o[oi])}</span></button>`}).join('')}</div>`
+    :`<div class="numin"><input id="ans" type="text" inputmode="decimal" autocomplete="off" placeholder="答案" ${done?'disabled':''} value="${esc(Q.typed)}"><span>${esc(q.unit)}</span></div>`;
+  const canCheck=q.t==='mc'?Q.sel!=null:true;
+  const hints=Q.hints?`<div class="hintbox">${Q.H.slice(0,Q.hints).map((h,i)=>`<p>💡 提示 ${i+1}：${h.text}</p>`).join('')}</div>`:'';
+  let fb='';
+  if(Q.phase==='retry')fb=`<div class="fb re pop"><div class="who">${heroSVG()}</div><div><h3>再想一次！</h3><p>還有一次機會，看看下面的提示。</p></div></div>`;
+  if(done){const r=Q.lastRes;fb=`<div class="fb ${r==='miss'?'no':'ok'} pop"><div class="who">${heroSVG(r==='miss'?'sad':'cheer')}</div><div>
+    <h3>${r==='indep'?pick(['命中！自己答對！','漂亮的一擊！','太強了！']):r==='help'?'答對了！':'這題先記下來'}</h3>
+    ${r==='miss'?`<p>正確答案：<b>${oh(q,ansText(q))}</b></p>`:''}<p>${q.html?q.e:esc(q.e)}</p>
+    <p class="note">${r==='indep'?'+10 經驗值':r==='help'?'+5 經驗值':'已放進錯題本'}</p></div></div>`}
+  const label={unit:'闖關',boss:'魔王戰',wrong:'錯題重練',concept:'觀念特訓',mix:'段考特訓'}[Q.mode];
+  return `<div class="qtop" style="--c:var(--${s})"><button class="back" style="margin:0" data-act="quit">✕ 離開</button><div class="dots">${dots}</div><span class="combo">${Q.combo>=2?'🔥×'+Q.combo:''}</span></div>
+  <div class="battle"><div>${heroSVG(done&&Q.lastRes!=='miss'?'cheer':'')}</div><div class="hp"><span>${label}・${Q.i+1}/${n}</span><span class="pbar"><i style="width:${hpLeft/n*100}%"></i></span><span>魔物體力 ${hpLeft}</span></div><div>${monSVG(MONCOL[s],Q.mode==='boss',Q.anim)}</div></div>
+  <div class="card qcard" style="--c:var(--${s})"><span class="chip">${STK[q.u]} ${esc(unitOf(q.u).u.name)}</span>
+  <div class="qtext">${qh(q)}</div>${opts}${hints}${fb}
+  <div class="qbar">${done?'<span></span>':`<button class="btn" data-act="hint" ${Q.hints>=2?'disabled':''}>💡 提示 ${Q.hints}/2</button>`}
+   ${done?`<button class="btn dark big" data-act="next">${Q.i+1<n?'下一題 →':'看結果 🏁'}</button>`:`<button class="btn go big" data-act="check" ${canCheck?'':'disabled'}>檢查答案 ✓</button>`}</div></div>`}
+
+function check(ok,my){
+  const q=Q.list[Q.i];
+  if(ok){finalizeQ(Q.tries===0&&Q.hints===0?'indep':'help');return}
+  Q.tries++;
+  if(Q.tries===1){const old=S.wrong[q.id]||{};S.wrong[q.id]={id:q.id,t:q.t,c:q.c,q:q.q,o:q.o,a:q.a,e:q.e,unit:q.unit,html:q.html,u:q.u,s:q.s,n:(old.n||0)+1,streak:0,mastered:false,last:Date.now(),my};Q.wrongs.push(q)}
+  if(Q.tries<2){Q.phase='retry';if(q.t==='mc'&&Q.sel!=null)Q.bad.push(Q.sel);Q.sel=null;if(Q.hints<1)Q.hints=1;saveS();render();return}
+  if(q.t==='mc'&&Q.sel!=null)Q.bad.push(Q.sel);
+  finalizeQ('miss')}
+function finalizeQ(r){
+  const q=Q.list[Q.i];Q.phase='done';Q.lastRes=r;Q.res[Q.i]=r;S.answered++;
+  const cs=S.cstat[q.c]||(S.cstat[q.c]={r:0,w:0});
+  if(r==='miss'){Q.combo=0;cs.w++}
+  else{S.correct++;Q.anim=true;
+    if(r==='indep'){S.indep++;cs.r++;Q.combo++;Q.maxCombo=Math.max(Q.maxCombo,Q.combo);const g=10+Math.min(Q.combo-1,5)*2;Q.xp+=g;S.xp+=g;
+      const w=S.wrong[q.id];if(w&&!w.mastered&&Q.tries===0){w.streak=(w.streak||0)+1;if(w.streak>=2){w.mastered=true;w.mt=Date.now();Q.mastered++}}}
+    else{cs.w++;Q.combo=0;Q.xp+=5;S.xp+=5}}
+  saveS();render()}
+function finish(){
+  const n=Q.list.length,ind=Q.res.filter(r=>r==='indep').length,hp=Q.res.filter(r=>r==='help').length,pts=ind*2+hp,pct=pts/(2*n);
+  let stars=0;
+  if(Q.mode==='unit'||Q.mode==='boss'){const id=Q.mode==='boss'?Q.s+'-boss':Q.u;
+    stars=pct>=.95?3:pct>=.8?2:pct*100>=C.pass?1:0;const st=S.units[id]||(S.units[id]={best:0,plays:0});const before=st.best;st.plays++;
+    const sc=`${ind+hp}/${n}`;if(stars>st.best)st.best=stars;if(!st.bestPts||pts>st.bestPts){st.bestPts=pts;st.bestScore=sc}
+    if(stars>before){const b=(stars-before)*30;S.xp+=b;Q.xp+=b}Q.newPass=before===0&&stars>0}
+  S.log.unshift({ts:Date.now(),mode:Q.mode,s:Q.s||Q.list[0].s,u:Q.mode==='unit'?Q.u:Q.mode==='boss'?Q.s+'-boss':'',sc:ind+hp,ind,n,st:stars,label:Q.label||''});S.log=S.log.slice(0,300);
+  Q.stars=stars;Q.ind=ind;Q.hp=hp;saveS();go({name:'result'})}
+function vResult(){
+  const n=Q.list.length,s=Q.s||Q.list[0].s,isLv=Q.mode==='unit'||Q.mode==='boss',win=isLv?Q.stars>0:true;
+  const head=isLv?(win?(Q.mode==='boss'?'魔王被打倒了！':'過關成功！'):'魔物逃走了，再挑戰一次！'):'練習完成！';
+  return `<div class="card result" style="--c:var(--${s})"><div class="pics"><div class="h ${win?'bob':''}">${heroSVG(win?'cheer':'sad')}</div><div class="m" style="${win?'opacity:.35;transform:rotate(18deg)':''}">${monSVG(MONCOL[s],Q.mode==='boss')}</div></div>
+  ${isLv?`<div class="big pop">${'★'.repeat(Q.stars)}<span class="off">${'★'.repeat(3-Q.stars)}</span></div>`:''}<h1>${head}</h1>
+  ${Q.newPass&&Q.mode==='unit'?`<div class="gotstk pop"><span>${STK[Q.u]}</span>得到新貼紙！下一關開啟了</div>`:''}
+  <div class="tally"><div><b>${Q.ind}</b><span>自己答對</span></div><div><b>${Q.hp}</b><span>提示後答對</span></div><div><b>${n-Q.ind-Q.hp}</b><span>要再複習</span></div><div><b>+${Q.xp}</b><span>經驗值</span></div>${Q.mastered?`<div><b>${Q.mastered}</b><span>打倒錯錯怪</span></div>`:''}</div>
+  <div class="row" style="justify-content:center;margin-top:12px">
+   ${Q.mode==='unit'?`<button class="btn go big" data-act="start" data-u="${Q.u}">🔁 再挑戰</button><button class="btn" data-act="subject" data-s="${s}">🗺️ 回地圖</button>`:''}
+   ${Q.mode==='boss'?`<button class="btn go big" data-act="boss" data-s="${s}">🔁 再戰魔王</button><button class="btn" data-act="subject" data-s="${s}">🗺️ 回地圖</button>`:''}
+   ${Q.mode==='mix'?`<button class="btn go big" data-act="mix" data-s="${s}">🔁 再一次</button><button class="btn" data-act="subject" data-s="${s}">🗺️ 回地圖</button>`:''}
+   ${Q.mode==='wrong'||Q.mode==='concept'?`<button class="btn go big" data-act="nav" data-v="${Q.mode==='wrong'?'wrong':'concept'}">回${Q.mode==='wrong'?'錯題本':'補給站'}</button>`:''}
+   ${Q.wrongs.length&&Q.mode!=='wrong'?`<button class="btn" data-act="nav" data-v="wrong">📒 看錯題</button>`:''}</div></div>`}
+
+/* ========== 錯題本 ========== */
+function wItem(w){return `<div class="card witem ${w.mastered?'m':''}"><div class="q">${w.html?w.q:esc(w.q)}</div>
+  <div class="ans">${w.my!=null&&w.my!==''?`<span class="x">✗ 你寫：${w.html?w.my:esc(w.my)}</span>`:''}<span class="o">✓ 答案：${w.html?ansText(w):esc(ansText(w))}</span>${w.n?`<span class="muted">錯 ${w.n} 次</span>`:''}${w.mastered?'<span class="chip">已打倒</span>':''}</div>
+  <div class="e">${w.html?w.e:esc(w.e)}</div></div>`}
+function vWrong(){
+  const all=Object.values(S.wrong),list=all.filter(w=>WF==='all'||w.s===WF),pend=list.filter(w=>!w.mastered),mast=list.filter(w=>w.mastered);
+  const groups={};pend.sort((a,b)=>b.n-a.n).forEach(w=>{(groups[w.u]=groups[w.u]||[]).push(w)});
+  return `<h1 style="font-size:28px">📒 錯題本</h1>
+  <div class="filters" style="margin-top:12px">${[['all','全部'],...ORDER.map(s=>[s,SUBJ[s].name])].map(([k,l])=>`<button class="${WF===k?'on':''}" data-act="wf" data-f="${k}">${l} ${(k==='all'?all:all.filter(w=>w.s===k)).filter(w=>!w.mastered).length}</button>`).join('')}</div>
+  ${pend.length?`<div class="mon-card" style="margin:0 0 16px"><div class="m">${monSVG('#C9466E')}</div><div class="grow"><b>錯錯怪 ×${pend.length}</b><span class="note">連續答對兩次就打倒</span></div><button class="btn go" data-act="retrain" data-s="${WF}">出擊！</button></div>`
+   :`<div class="scene" style="margin-bottom:16px"><div class="who">${heroSVG('cheer')}</div><div class="bubble">沒有錯錯怪了，好厲害！</div></div>`}
+  ${Object.entries(groups).map(([u,ws])=>`<div class="wg"><h3>${STK[u]} ${SUBJ[ws[0].s].name}・${esc(unitOf(u).u.name)}</h3>${ws.map(wItem).join('')}</div>`).join('')}
+  ${mast.length?`<details style="margin-top:12px"><summary class="muted" style="cursor:pointer;font-family:var(--f-disp)">已打倒的錯錯怪（${mast.length}）</summary>${mast.map(wItem).join('')}</details>`:''}`}
+
+/* ========== 補給站 ========== */
+function vConcept(){
+  const keysOf=s=>{const keys=new Set();SUBJ[s].units.forEach(u=>{bank(u).forEach(q=>keys.add(q.c));gens(u).forEach(g=>keys.add(g[0]))});return [...keys].filter(k=>CON[k])};
+  const weak=ORDER.flatMap(keysOf).map(k=>({k,st:S.cstat[k]||{r:0,w:0},pend:pendingWrong().filter(w=>w.c===k).length})).filter(r=>r.pend>0||r.st.w>0).sort((a,b)=>(b.pend-a.pend)||(b.st.w-a.st.w)).slice(0,6);
+  return `<div class="talk"><div>${palSVG('na')}</div><div class="bubble">肚子餓了嗎？點「看重點」補充能量，再按「⚔️ 特訓」練 6 題！</div></div>
+  ${weak.length?`<div class="weakhead"><div class="m">${monSVG('#C9466E')}</div><div><h2>先打倒這些！</h2><span class="note">最常卡住的觀念</span></div></div><div class="ctiles">${weak.map(r=>ctile(r.k)).join('')}</div>`:''}
+  ${ORDER.map(s=>`<div class="subhead" style="--c:var(--${s})"><div class="p">${palSVG(s)}</div><div><h2>${SUBJ[s].name}補給</h2><small>${PAL[s]}陪你練習・${SUBJ[s].realm}</small></div><div class="e">${embSVG(s)}</div></div>
+   <div class="ctiles">${keysOf(s).map(k=>ctile(k)).join('')}</div>`).join('')}`}
+
+/* ========== 圖鑑 ========== */
+function vAlbum(){
+  const got=Object.keys(STK).filter(id=>best(id)>0).length;
+  return `<h1 style="font-size:28px">🏅 貼紙圖鑑</h1><p class="note">過關得到貼紙，三顆星會變成金色！已收集 ${got}/${Object.keys(STK).length}</p>
+  ${ORDER.map(s=>`<h2 class="sec" style="color:var(--${s})">${SUBJ[s].realm}</h2><div class="album">${SUBJ[s].units.map(u=>{const b=best(u.id);
+    return `<div class="slot ${b?'':'lock'} ${b===3?'gold':''}"><div class="s">${STK[u.id]}</div><b>${b?esc(u.name):'？？？'}</b>${b?starsHTML(b):'<small>未收集</small>'}</div>`}).join('')}
+    <div class="slot ${best(s+'-boss')?'':'lock'} ${best(s+'-boss')===3?'gold':''}"><div class="s">👑</div><b>${best(s+'-boss')?'魔王勳章':'？？？'}</b>${best(s+'-boss')?starsHTML(best(s+'-boss')):'<small>打倒魔王</small>'}</div></div>`).join('')}`}
+
+/* ========== 學習歷程 ========== */
+function vHistory(){
+  const acc=S.answered?Math.round(S.correct/S.answered*100):0,ind=S.answered?Math.round((S.indep||0)/S.answered*100):0;
+  const per=s=>{let r=0,w=0;Object.entries(S.cstat).forEach(([k,v])=>{if(k.startsWith(PREFIX[s])){r+=v.r;w+=v.w}});return{r,w}};
+  const logs=S.log.filter(l=>HIST_SUB==='all'||l.s===HIST_SUB),last=logs.filter(l=>['unit','boss','mix'].includes(l.mode)).slice(0,12).reverse();
+  const W=Math.max(320,last.length*50),H=180;
+  const chart=last.length?`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="最近成績">
+    ${[0,50,100].map(v=>`<line x1="34" x2="${W}" y1="${20+(100-v)*1.1}" y2="${20+(100-v)*1.1}" stroke="var(--line)"/><text x="0" y="${24+(100-v)*1.1}" font-size="12" fill="var(--muted)">${v}%</text>`).join('')}
+    ${last.map((l,i)=>{const p=(l.ind!=null?l.ind:l.sc)/l.n*100,h=p*1.1,x=44+i*48;return `<rect x="${x}" y="${130-h}" width="30" height="${Math.max(h,3)}" rx="6" fill="var(--${l.s})"/><text x="${x+15}" y="${H-24}" font-size="11" text-anchor="middle" fill="var(--muted)">${new Date(l.ts).getMonth()+1}/${new Date(l.ts).getDate()}</text><text x="${x+15}" y="${H-8}" font-size="11" text-anchor="middle" fill="var(--muted)">${SUBJ[l.s].name}</text>`}).join('')}</svg>`:'<p class="muted">闖過第一關，這裡就會畫出成績。</p>';
+  const weak=Object.entries(S.cstat).filter(([k,v])=>v.w>0&&CON[k]).sort((a,b)=>b[1].w-a[1].w).slice(0,5);
+  return `<h1 style="font-size:28px">📈 學習歷程</h1>
+  <div class="stats" style="margin-top:14px">${[[`Lv.${level()}`,title()],[S.xp,'經驗值'],[`${allPassed()}/${allUnits()}`,'已過關'],[totalStars(),'星星'],[S.answered,'做過的題目'],[ind+'%','自己答對'],[acc+'%','最後答對']].map(([b,s])=>`<div class="card stat"><b>${b}</b><span>${s}</span></div>`).join('')}</div>
+  <h2 class="sec">各科進度</h2>
+  <div class="card subbars">${ORDER.map(s=>{const p=passedCount(s),n=SUBJ[s].units.length,c=per(s),a=c.r+c.w?Math.round(c.r/(c.r+c.w)*100):0;return `<div class="subbar"><b style="color:var(--${s})">${SUBJ[s].name}</b><span class="pbar" style="--c:var(--${s})"><i style="width:${p/n*100}%"></i></span><span class="r">${p}/${n} 關・自己答對 ${c.r+c.w?a+'%':'—'}</span></div>`}).join('')}</div>
+  <h2 class="sec">最近成績（自己答對）</h2><div class="card chartbox">${chart}</div>
+  ${weak.length?`<h2 class="sec">最常卡住的觀念</h2><div class="card" style="padding:6px 18px"><ul class="tl">${weak.map(([k,v])=>`<li><span class="d">${SUBJ[ORDER.find(s=>k.startsWith(PREFIX[s]))].name}</span><span>${CON[k][0]}</span><button class="btn sm go" data-act="drill" data-c="${k}">特訓</button></li>`).join('')}</ul></div>`:''}
+  <h2 class="sec">冒險日誌</h2>
+  <div class="filters">${[['all','全部'],...ORDER.map(s=>[s,SUBJ[s].name])].map(([k,l])=>`<button class="${HIST_SUB===k?'on':''}" data-act="hf" data-f="${k}">${l}</button>`).join('')}</div>
+  <div class="card" style="padding:6px 18px">${logs.length?`<ul class="tl">${logs.slice(0,30).map(l=>{const nm=l.mode==='unit'?STK[l.u]+' '+unitOf(l.u).u.name:l.mode==='boss'?'👑 魔王城':l.mode==='mix'?'🎯 段考特訓':l.mode==='wrong'?'📒 錯題重練':'🍙 '+(l.label||'觀念特訓');return `<li><span class="d">${fmtD(l.ts)}</span><span>${SUBJ[l.s].name}・${esc(nm)}</span><span>${l.sc}/${l.n}${l.mode==='unit'||l.mode==='boss'?' '+starsHTML(l.st):''}</span></li>`}).join('')}</ul>`:'<p class="muted">還沒有紀錄。</p>'}</div>`}
+
+/* ========== 家長模式 ========== */
+function vParent(){
+  if(!P.authed)return `<div class="card pin"><div style="width:90px;margin:0 auto">${palSVG('ma')}</div><h2 style="font-size:26px">家長模式</h2>
+   <p class="note">解鎖關卡、編輯題目、備份資料</p><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="密碼">
+   <div style="margin-top:14px"><button class="btn go" data-act="pin">進入</button></div><p class="note">預設密碼 0000，進入後請到「一般設定」修改。</p><p id="pinErr" class="note" style="color:var(--bad)" hidden>密碼不正確，請再試一次。</p></div>`;
+  const tabs=[['lock','關卡解鎖'],['qs','題目編輯'],['content','導覽與心智圖'],['set','一般設定'],['data','備份與重設']];
+  let body='';
+  const subSel=`<div class="filters">${ORDER.map(s=>`<button class="${P.sub===s?'on':''}" data-act="psub" data-s="${s}">${SUBJ[s].name}</button>`).join('')}</div>`;
+  const unitSel=`<div class="field"><label for="puid">選擇關卡</label><select id="puid" data-act="puid">${SUBJ[P.sub].units.map(u=>`<option value="${u.id}" ${P.uid===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>`;
+  if(P.tab==='lock'){
+    const row=(id,name,open)=>{const ov=C.lock[id]||'auto';return `<div class="lockrow"><div><b>${esc(name)}</b><div class="note">目前：${open?'已開放':'未解鎖'}${best(id)?'・'+best(id)+' 星':''}</div></div>
+      <div class="seg">${[['auto','依進度'],['open','解鎖'],['lock','上鎖']].map(([k,l])=>`<button class="${ov===k?'on':''}" data-act="lockset" data-id="${id}" data-v="${k}">${l}</button>`).join('')}</div></div>`};
+    const u=SUBJ[P.sub].units;
+    body=`<div class="card panel"><h3>全部關卡</h3><label class="toggle"><input type="checkbox" data-act="allopen" ${C.allOpen?'checked':''}> 全部解鎖（不受闖關進度限制）</label><p class="note">關閉後恢復每一關的個別設定。</p></div>
+     <div class="card panel"><h3>個別關卡</h3>${subSel}${u.map((x,i)=>row(x.id,`${i+1}. ${x.name}`,isOpen(P.sub,i))).join('')}${row(P.sub+'-boss','魔王城：期末總複習',isOpen(P.sub,u.length))}</div>`}
+  else if(P.tab==='qs'){
+    const u=unitOf(P.uid).u,qs=bank(u),custom=!!C.qs[u.id];
+    const cons=Object.keys(CON).filter(k=>k.startsWith(PREFIX[P.sub]));
+    let form='';
+    if(P.edit!=null){const q=P.edit==='new'?{t:'mc',q:'',o:['','','',''],a:0,e:'',c:cons[0],unit:'',h:''}:qs[P.edit];const o=(q.o||[]).concat(['','','','']).slice(0,4);
+      form=`<div class="card panel" style="border:3px solid var(--gold)"><h3>${P.edit==='new'?'新增題目':'修改題目'}</h3>
+      <div class="field"><label for="ed-t">題型</label><select id="ed-t" data-act="edtype"><option value="mc" ${q.t==='mc'?'selected':''}>選擇題（4 個選項）</option><option value="num" ${q.t==='num'?'selected':''}>填數字題</option></select></div>
+      <div class="field"><label for="ed-q">題目</label><textarea id="ed-q" style="min-height:70px">${esc(q.q)}</textarea></div>
+      <div id="ed-mc" ${q.t==='num'?'hidden':''}>${o.map((x,i)=>`<div class="field"><label for="ed-o${i}">選項 ${'ABCD'[i]}</label><input id="ed-o${i}" value="${esc(x)}"></div>`).join('')}
+       <div class="field"><label for="ed-a">正確答案</label><select id="ed-a">${[0,1,2,3].map(i=>`<option value="${i}" ${q.t==='mc'&&q.a===i?'selected':''}>選項 ${'ABCD'[i]}</option>`).join('')}</select></div></div>
+      <div id="ed-num" ${q.t==='num'?'':'hidden'}><div class="field"><label for="ed-n">正確答案（數字）</label><input id="ed-n" inputmode="decimal" value="${q.t==='num'?esc(q.a):''}"></div><div class="field"><label for="ed-u">單位（可空白）</label><input id="ed-u" value="${esc(q.unit||'')}"></div></div>
+      <div class="field"><label for="ed-c">觀念</label><select id="ed-c">${cons.map(k=>`<option value="${k}" ${q.c===k?'selected':''}>${CON[k][0]}</option>`).join('')}</select></div>
+      <div class="field"><label for="ed-h">提示 1（可空白，空白時自動用觀念卡）</label><input id="ed-h" value="${esc(q.h||'')}"></div>
+      <div class="field"><label for="ed-e">解說（答題後顯示）</label><textarea id="ed-e" style="min-height:70px">${esc(q.e)}</textarea></div>
+      <p id="edErr" class="note" style="color:var(--bad)" hidden></p>
+      <div class="row"><button class="btn go" data-act="edsave">儲存題目</button><button class="btn" data-act="edcancel">取消</button></div></div>`}
+    body=`<div class="card panel"><h3>題目編輯</h3>${subSel}${unitSel}
+     ${GEN[u.id]?`<label class="toggle" style="margin-bottom:10px"><input type="checkbox" data-act="gentoggle" ${C.genOff[u.id]?'':'checked'}> 開啟數學自動出題（${GEN[u.id].length} 種題型，每次數字都不同）</label>`:''}
+     <div class="row" style="justify-content:space-between;margin:6px 0"><span class="note">固定題目 ${qs.length} 題${custom?'・已自訂':''}</span><span class="row"><button class="btn sm go" data-act="edadd">＋ 新增題目</button>${custom?'<button class="btn sm" data-act="edrestore">還原本關預設題目</button>':''}</span></div></div>
+     ${form}
+     <div class="card panel">${qs.map((q,i)=>`<div class="qrow"><div><div>${i+1}. ${esc(strip(q.q))}</div><div class="a">答案：${esc(strip(ansText(q)))}・${CON[q.c]?CON[q.c][0]:''}</div></div><div class="row" style="align-items:flex-start"><button class="btn sm" data-act="edit" data-i="${i}">修改</button><button class="btn sm" data-act="eddel" data-i="${i}">刪除</button></div></div>`).join('')||'<p class="muted">這一關沒有固定題目。</p>'}</div>`}
+  else if(P.tab==='content'){
+    const u=unitOf(P.uid).u,c=content(u);
+    body=`<div class="card panel"><h3>課程導覽與心智圖</h3>${subSel}${unitSel}
+     <div class="field"><label for="ct-goal">本關目標（夥伴對話框）</label><textarea id="ct-goal" style="min-height:60px">${esc(c.goal)}</textarea></div>
+     <div class="field"><label for="ct-les">課次清單（一行一課）</label><textarea id="ct-les">${esc(c.lessons.join('\n'))}</textarea></div>
+     <div class="field"><label for="ct-map">心智圖（一行一個分支，格式：分支：重點、重點、重點）</label><textarea id="ct-map" style="min-height:160px">${esc(c.map.map(b=>b[0]+'：'+b[1].join('、')).join('\n'))}</textarea></div>
+     <div class="row"><button class="btn go" data-act="ctsave">儲存</button>${C.content[u.id]?'<button class="btn" data-act="ctrestore">還原預設內容</button>':''}</div></div>`}
+  else if(P.tab==='set'){
+    body=`<div class="card panel"><h3>一般設定</h3>
+     <div class="field"><label for="st-name">勇者名字</label><input id="st-name" maxlength="12" value="${esc(C.name)}"></div>
+     <div class="field"><label for="st-n">每關題數（5～15）</label><input id="st-n" type="number" min="5" max="15" value="${C.perQuiz}"></div>
+     <div class="field"><label for="st-p">過關門檻（50～100；自己答對算 2 分、提示或第二次答對算 1 分）</label><input id="st-p" type="number" min="50" max="100" value="${C.pass}"></div>
+     <div class="field"><label for="st-pin">修改家長密碼（4～8 位數字，空白表示不修改）</label><input id="st-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
+     <p id="stErr" class="note" style="color:var(--bad)" hidden></p><button class="btn go" data-act="stsave">儲存設定</button></div>`}
+  else{
+    const dump=JSON.stringify({v:2,state:S,custom:C});
+    body=`<div class="card panel"><h3>匯出備份</h3><p class="note">學習紀錄只存在這台裝置。換裝置前，請複製下面的備份文字，貼到另一台裝置的「匯入備份」。</p>
+     <div class="field"><textarea id="exp" readonly style="min-height:90px">${esc(dump)}</textarea></div><button class="btn" data-act="copy">複製備份文字</button></div>
+     <div class="card panel"><h3>匯入備份</h3><div class="field"><label for="imp">貼上備份文字</label><textarea id="imp" style="min-height:90px"></textarea></div><p id="impErr" class="note" style="color:var(--bad)" hidden></p><button class="btn go" data-act="import">匯入（會覆蓋目前資料）</button></div>
+     <div class="card panel"><h3>重設學習紀錄</h3><p class="note">清除經驗值、星星、錯題和日誌。自訂的題目與設定會保留。</p><button class="btn danger" data-act="reset">${P.resetArm?'再按一次確認清除':'清除學習紀錄'}</button></div>`}
+  return `<div class="row" style="justify-content:space-between"><h1 style="font-size:28px">🔒 家長模式</h1><button class="btn sm" data-act="plock">鎖定並離開</button></div>
+   <div class="ptabs">${tabs.map(([k,l])=>`<button class="${P.tab===k?'on':''}" data-act="ptab" data-t="${k}">${l}</button>`).join('')}</div>${body}`}
+
+/* ========== 路由與事件 ========== */
+function go(v){if(v.name!=='parent'){P.authed=false;P.edit=null}V=v;render();window.scrollTo(0,0)}
+function render(){
+  const map={home:vHome,subject:vSubject,unit:vUnit,quiz:vQuiz,result:vResult,wrong:vWrong,concept:vConcept,album:vAlbum,history:vHistory,parent:vParent};
+  $('#app').innerHTML=header()+`<main class="wrap">${(map[V.name]||vHome)()}</main>`+bottomNav();
+  if(Q)Q.anim=false}
+const A={
+ nav:d=>go({name:d.v}),
+ subject:d=>go({name:'subject',s:d.s}),
+ unit:d=>go({name:'unit',u:d.u,tab:'guide'}),
+ locked:()=>toast('🔒 先通過前一關喔！'),
+ utab:d=>{V.tab=d.t;render()},
+ start:d=>{const{s}=unitOf(d.u);startQuiz('unit',buildUnitQuiz(d.u),{u:d.u,s})},
+ boss:d=>startQuiz('boss',buildBoss(d.s),{s:d.s}),
+ mix:d=>{const ids=[...(MIX[d.s]||[])];if(!ids.length){toast('先勾選至少一關');return}startQuiz('mix',buildMix(d.s,ids),{s:d.s})},
+ retrain:d=>{const l=shuffle(pendingWrong().filter(w=>d.s==='all'||w.s===d.s)).slice(0,10).map(w=>Object.assign({},w));startQuiz('wrong',l,{s:l[0]&&l[0].s})},
+ drill:d=>{const l=buildConcept(d.c);startQuiz('concept',l,{s:l[0]&&l[0].s,label:CON[d.c][0]})},
+ pick:d=>{if(Q.phase==='done')return;Q.sel=+d.i;render()},
+ hint:()=>{if(Q.hints>=2||Q.phase==='done')return;Q.hints++;if(Q.hints===2&&Q.H[1].elim){Q.elim=Q.H[1].elim.filter(i=>!Q.bad.includes(i));if(Q.elim.includes(Q.sel))Q.sel=null}render()},
+ check:()=>{if(Q.phase==='done')return;const q=Q.list[Q.i];
+  if(q.t==='mc'){if(Q.sel==null)return;check(Q.sel===q.a,q.o[Q.sel])}
+  else{const el=$('#ans'),raw=(el.value||'').replace(/[０-９．]/g,c=>c==='．'?'.':String.fromCharCode(c.charCodeAt(0)-65248)).replace(/[,，\s]/g,'');if(raw===''){toast('先寫答案喔');return}const v=parseFloat(raw);Q.typed=el.value;const ok=!isNaN(v)&&Math.abs(v-+q.a)<1e-6;if(!ok&&Q.tries===0)Q.typed='';check(ok,el.value)}},
+ next:()=>{if(Q.i+1<Q.list.length){Q.i++;prepQ();render();window.scrollTo(0,0)}else finish()},
+ quit:()=>{const s=Q.s;if(Q.mode==='unit')go({name:'unit',u:Q.u,tab:'quiz'});else if(Q.mode==='boss'||Q.mode==='mix')go({name:'subject',s});else go({name:Q.mode==='wrong'?'wrong':'concept'})},
+ wf:d=>{WF=d.f;render()},
+ hf:d=>{HIST_SUB=d.f;render()},
+ pin:()=>{const v=$('#pin').value;if(v===String(C.pin)){P.authed=true;render()}else{$('#pinErr').hidden=false;$('#pin').value='';$('#pin').focus()}},
+ plock:()=>{P.authed=false;go({name:'home'})},
+ ptab:d=>{P.tab=d.t;P.edit=null;P.resetArm=false;render()},
+ psub:d=>{P.sub=d.s;P.uid=SUBJ[d.s].units[0].id;P.edit=null;render()},
+ lockset:d=>{if(d.v==='auto')delete C.lock[d.id];else C.lock[d.id]=d.v;saveC();render();toast('關卡設定已更新')},
+ edadd:()=>{P.edit='new';render()},
+ edit:d=>{P.edit=+d.i;render()},
+ edcancel:()=>{P.edit=null;render()},
+ eddel:d=>{const u=unitOf(P.uid).u;const arr=bank(u).map(q=>Object.assign({},q));arr.splice(+d.i,1);C.qs[u.id]=arr;P.edit=null;saveC();render();toast('已刪除題目')},
+ edrestore:()=>{delete C.qs[P.uid];P.edit=null;saveC();render();toast('已還原預設題目')},
+ edsave:()=>{const u=unitOf(P.uid).u,t=$('#ed-t').value,q=$('#ed-q').value.trim(),e=$('#ed-e').value.trim(),c=$('#ed-c').value,h=$('#ed-h').value.trim(),err=$('#edErr');
+  const fail=m=>{err.textContent=m;err.hidden=false};if(!q)return fail('請輸入題目。');
+  let obj;if(t==='mc'){const o=[0,1,2,3].map(i=>$('#ed-o'+i).value.trim());if(o.some(x=>!x))return fail('四個選項都要填寫。');if(new Set(o).size<4)return fail('四個選項不可以重複。');obj={t,q,o,a:+$('#ed-a').value,e,c}}
+  else{const n=parseFloat($('#ed-n').value);if(isNaN(n))return fail('正確答案要填數字。');obj={t,q,a:n,unit:$('#ed-u').value.trim(),e,c}}
+  if(h)obj.h=h;
+  const arr=bank(u).map(x=>Object.assign({},x));if(P.edit==='new'){obj.id='c-'+Date.now().toString(36);arr.push(obj)}else{obj.id=arr[P.edit].id;arr[P.edit]=obj}
+  C.qs[u.id]=arr;P.edit=null;saveC();render();toast('題目已儲存')},
+ ctsave:()=>{const u=unitOf(P.uid).u;const les=$('#ct-les').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  const map=$('#ct-map').value.split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const m=l.split(/[：:]/);const b=m.shift().trim();return[b,m.join('：').split(/[、,，]/).map(x=>x.trim()).filter(Boolean)]});
+  C.content[u.id]={goal:$('#ct-goal').value.trim(),lessons:les.length?les:u.lessons,map:map.length?map:u.map};saveC();render();toast('已儲存導覽與心智圖')},
+ ctrestore:()=>{delete C.content[P.uid];saveC();render();toast('已還原預設內容')},
+ stsave:()=>{const n=Math.min(15,Math.max(5,parseInt($('#st-n').value)||8)),p=Math.min(100,Math.max(50,parseInt($('#st-p').value)||70)),pin=$('#st-pin').value.trim(),err=$('#stErr');
+  if(pin&&!/^\d{4,8}$/.test(pin)){err.textContent='密碼要是 4～8 位數字。';err.hidden=false;return}
+  C.name=$('#st-name').value.trim()||'小勇者';C.perQuiz=n;C.pass=p;if(pin)C.pin=pin;saveC();render();toast(pin?'設定與新密碼已儲存':'設定已儲存')},
+ copy:()=>{const t=$('#exp');const fb=()=>{t.select();toast('請按 Ctrl+C 或長按複製')};try{navigator.clipboard.writeText(t.value).then(()=>toast('已複製備份文字'),fb)}catch(e){fb()}},
+ import:()=>{const err=$('#impErr');try{const d=JSON.parse($('#imp').value);if(!d||!d.state||!d.custom)throw 0;S=Object.assign(freshS(),d.state);C=Object.assign(freshC(),d.custom);saveS();saveC();P.authed=true;render();toast('備份已匯入')}catch(e){err.textContent='這段文字不是有效的備份，請確認整段都有貼上。';err.hidden=false}},
+ reset:()=>{if(!P.resetArm){P.resetArm=true;render();return}S=freshS();saveS();P.resetArm=false;render();toast('學習紀錄已清除')}
+};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el||el.tagName==='SELECT'||el.type==='checkbox')return;const f=A[el.dataset.act];if(f){e.preventDefault();f(el.dataset)}});
+document.addEventListener('change',e=>{const el=e.target,a=el.dataset.act;
+ if(a==='puid'){P.uid=el.value;P.edit=null;render()}
+ else if(a==='allopen'){C.allOpen=el.checked;saveC();render();toast(el.checked?'已全部解鎖':'已恢復個別設定')}
+ else if(a==='gentoggle'){if(el.checked)delete C.genOff[P.uid];else C.genOff[P.uid]=true;saveC();toast(el.checked?'已開啟自動出題':'已關閉自動出題')}
+ else if(a==='mixpick'){const set=MIX[el.dataset.s];if(el.checked)set.add(el.value);else set.delete(el.value)}
+ else if(a==='edtype'){$('#ed-mc').hidden=el.value!=='mc';$('#ed-num').hidden=el.value!=='num'}});
+document.addEventListener('input',e=>{if(e.target.id==='ans'&&Q)Q.typed=e.target.value});
+document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='ans'){e.preventDefault();A.check()}else if(e.target.id==='pin'){e.preventDefault();A.pin()}});
+render();
+</script>
